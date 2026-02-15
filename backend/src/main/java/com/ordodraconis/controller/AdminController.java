@@ -1,0 +1,166 @@
+package com.ordodraconis.controller;
+
+import com.ordodraconis.dto.*;
+import com.ordodraconis.model.Media;
+import com.ordodraconis.service.AlbumService;
+import com.ordodraconis.service.MediaService;
+import com.ordodraconis.service.NewsService;
+import com.ordodraconis.service.ProductService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/admin")
+public class AdminController {
+    
+    private final NewsService newsService;
+    private final ProductService productService;
+    private final AlbumService albumService;
+    private final MediaService mediaService;
+    
+    public AdminController(NewsService newsService, ProductService productService, 
+                          AlbumService albumService, MediaService mediaService) {
+        this.newsService = newsService;
+        this.productService = productService;
+        this.albumService = albumService;
+        this.mediaService = mediaService;
+    }
+    
+    // News CRUD
+    @GetMapping("/news")
+    public ResponseEntity<List<NewsDto>> getAllNews() {
+        return ResponseEntity.ok(newsService.getAll("sr", "cyrl"));
+    }
+    
+    @PostMapping("/news")
+    public ResponseEntity<NewsDto> createNews(@Valid @RequestBody NewsCreateUpdateDto dto) {
+        return ResponseEntity.ok(newsService.create(dto));
+    }
+    
+    @PutMapping("/news/{id}")
+    public ResponseEntity<NewsDto> updateNews(@PathVariable String id, @Valid @RequestBody NewsCreateUpdateDto dto) {
+        return ResponseEntity.ok(newsService.update(id, dto));
+    }
+    
+    @DeleteMapping("/news/{id}")
+    public ResponseEntity<Void> deleteNews(@PathVariable String id) {
+        newsService.delete(id);
+        return ResponseEntity.ok().build();
+    }
+    
+    // Product CRUD
+    @GetMapping("/products")
+    public ResponseEntity<List<ProductDto>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAll("sr", "cyrl"));
+    }
+    
+    @PostMapping("/products")
+    public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody ProductCreateUpdateDto dto) {
+        return ResponseEntity.ok(productService.create(dto));
+    }
+    
+    @PutMapping("/products/{id}")
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable String id, @Valid @RequestBody ProductCreateUpdateDto dto) {
+        return ResponseEntity.ok(productService.update(id, dto));
+    }
+    
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
+        productService.delete(id);
+        return ResponseEntity.ok().build();
+    }
+    
+    // Album CRUD
+    @GetMapping("/albums")
+    public ResponseEntity<List<AlbumDto>> getAllAlbums() {
+        return ResponseEntity.ok(albumService.getAll("sr", "cyrl"));
+    }
+    
+    @PostMapping("/albums")
+    public ResponseEntity<AlbumDto> createAlbum(@Valid @RequestBody AlbumCreateUpdateDto dto) {
+        return ResponseEntity.ok(albumService.create(dto));
+    }
+    
+    @PutMapping("/albums/{id}")
+    public ResponseEntity<AlbumDto> updateAlbum(@PathVariable String id, @Valid @RequestBody AlbumCreateUpdateDto dto) {
+        return ResponseEntity.ok(albumService.update(id, dto));
+    }
+    
+    @DeleteMapping("/albums/{id}")
+    public ResponseEntity<Void> deleteAlbum(@PathVariable String id) {
+        albumService.delete(id);
+        return ResponseEntity.ok().build();
+    }
+    
+    // Media
+    @PostMapping("/media/upload")
+    public ResponseEntity<Media> uploadMedia(@RequestParam("file") MultipartFile file) throws IOException {
+        return ResponseEntity.ok(mediaService.uploadFile(file));
+    }
+    
+    @GetMapping("/media")
+    public ResponseEntity<List<Media>> getAllMedia() {
+        return ResponseEntity.ok(mediaService.getAll());
+    }
+    
+    @DeleteMapping("/media/{id}")
+    public ResponseEntity<Void> deleteMedia(@PathVariable String id) {
+        mediaService.delete(id);
+        return ResponseEntity.ok().build();
+    }
+    
+    // Workshop CRUD - TODO: Implement WorkshopService
+    @GetMapping("/workshops")
+    public ResponseEntity<List<?>> getAllWorkshops() {
+        // TODO: Return all workshops
+        return ResponseEntity.ok(List.of());
+    }
+    
+    @PostMapping("/workshops")
+    public ResponseEntity<?> createWorkshop(@Valid @RequestBody Object dto) {
+        // TODO: Implement workshop creation
+        return ResponseEntity.ok().build();
+    }
+    
+    @PutMapping("/workshops/{id}")
+    public ResponseEntity<?> updateWorkshop(@PathVariable String id, @Valid @RequestBody Object dto) {
+        // TODO: Implement workshop update
+        return ResponseEntity.ok().build();
+    }
+    
+    @DeleteMapping("/workshops/{id}")
+    public ResponseEntity<Void> deleteWorkshop(@PathVariable String id) {
+        // TODO: Implement workshop deletion
+        return ResponseEntity.ok().build();
+    }
+    
+    // Museum Item CRUD - TODO: Implement MuseumItemService
+    @GetMapping("/museum-items")
+    public ResponseEntity<List<?>> getAllMuseumItems() {
+        // TODO: Return all museum items
+        return ResponseEntity.ok(List.of());
+    }
+    
+    @PostMapping("/museum-items")
+    public ResponseEntity<?> createMuseumItem(@Valid @RequestBody Object dto) {
+        // TODO: Implement museum item creation
+        return ResponseEntity.ok().build();
+    }
+    
+    @PutMapping("/museum-items/{id}")
+    public ResponseEntity<?> updateMuseumItem(@PathVariable String id, @Valid @RequestBody Object dto) {
+        // TODO: Implement museum item update
+        return ResponseEntity.ok().build();
+    }
+    
+    @DeleteMapping("/museum-items/{id}")
+    public ResponseEntity<Void> deleteMuseumItem(@PathVariable String id) {
+        // TODO: Implement museum item deletion
+        return ResponseEntity.ok().build();
+    }
+}

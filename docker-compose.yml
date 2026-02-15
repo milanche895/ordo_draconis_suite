@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: ordodraconis-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: ordodraconis
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ordodraconis-backend
+    ports:
+      - "8080:8080"
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/ordodraconis
+      JWT_SECRET: dGhpc2lzYXNlY3JldGtleWZvcmRldmVsb3BtZW50b25seWNoYW5nZWlucHJvZHVjdGlvbg==
+      ADMIN_EMAIL: admin@ordodraconis.com
+      ADMIN_PASSWORD: admin123
+      TRANSLATION_PROVIDER: mock
+      UPLOAD_DIR: ./uploads
+    depends_on:
+      - mongodb
+    volumes:
+      - ./backend/uploads:/app/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ordodraconis-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:8080/api
+    depends_on:
+      - backend
+
+volumes:
+  mongodb_data:
