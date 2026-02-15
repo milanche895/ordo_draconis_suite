@@ -94,7 +94,7 @@ function WorkshopsPage() {
                 <CardMedia
                   component="img"
                   height="200"
-                  image={`/placeholder-workshop-${idx + 1}.jpg`}
+                  image={`/placeholder-workshop${idx + 1}.jpg`}
                   alt={workshop.title}
                 />
                 <CardContent>

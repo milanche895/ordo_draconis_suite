@@ -30,30 +30,50 @@ import {
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material'
 import api from '../../api/axios'
 import ImageUpload from '../../components/admin/ImageUpload'
+import { cyrlToLatn, latnToCyrl } from '../../utils/transliterate'
 
 function MuseumItemsAdmin() {
   const queryClient = useQueryClient()
   const [formData, setFormData] = useState({
     titleSrCyrl: '',
+    titleSrLatn: '',
+    titleEn: '',
     descriptionSrCyrl: '',
+    descriptionSrLatn: '',
+    descriptionEn: '',
     contentSrCyrl: '',
+    contentSrLatn: '',
+    contentEn: '',
     coverImage: '',
-    galleryImages: [],
     category: '',
     period: '',
     origin: '',
     featured: false,
     active: true,
-    generateEn: false,
   })
   const [editingId, setEditingId] = useState(null)
   const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null })
+
+  const updateCyrlAndLatn = (field, cyrlValue, latnValue) => {
+    const updates = {}
+    if (field === 'title') {
+      updates.titleSrCyrl = cyrlValue
+      updates.titleSrLatn = latnValue
+    } else if (field === 'description') {
+      updates.descriptionSrCyrl = cyrlValue
+      updates.descriptionSrLatn = latnValue
+    } else if (field === 'content') {
+      updates.contentSrCyrl = cyrlValue
+      updates.contentSrLatn = latnValue
+    }
+    setFormData((prev) => ({ ...prev, ...updates }))
+  }
   
   const { data: museumItems = [], isLoading } = useQuery({
-    queryKey: ['admin-museum-items'],
+    queryKey: ['admin-museum'],
     queryFn: async () => {
       try {
-        const response = await api.get('/admin/museum-items')
+        const response = await api.get('/admin/museum')
         return response.data || []
       } catch (error) {
         console.error('Error fetching museum items:', error)
@@ -63,25 +83,25 @@ function MuseumItemsAdmin() {
   })
   
   const createMutation = useMutation({
-    mutationFn: (data) => api.post('/admin/museum-items', data),
+    mutationFn: (data) => api.post('/admin/museum', data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['admin-museum-items'])
+      queryClient.invalidateQueries(['admin-museum'])
       resetForm()
     },
   })
   
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => api.put(`/admin/museum-items/${id}`, data),
+    mutationFn: ({ id, data }) => api.put(`/admin/museum/${id}`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['admin-museum-items'])
+      queryClient.invalidateQueries(['admin-museum'])
       resetForm()
     },
   })
   
   const deleteMutation = useMutation({
-    mutationFn: (id) => api.delete(`/admin/museum-items/${id}`),
+    mutationFn: (id) => api.delete(`/admin/museum/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries(['admin-museum-items'])
+      queryClient.invalidateQueries(['admin-museum'])
       setDeleteDialog({ open: false, id: null })
     },
   })
@@ -89,42 +109,75 @@ function MuseumItemsAdmin() {
   const resetForm = () => {
     setFormData({
       titleSrCyrl: '',
+      titleSrLatn: '',
+      titleEn: '',
       descriptionSrCyrl: '',
+      descriptionSrLatn: '',
+      descriptionEn: '',
       contentSrCyrl: '',
+      contentSrLatn: '',
+      contentEn: '',
       coverImage: '',
-      galleryImages: [],
       category: '',
       period: '',
       origin: '',
       featured: false,
       active: true,
-      generateEn: false,
     })
     setEditingId(null)
   }
-  
+
+  const resolve = (obj, fallback = '') => {
+    if (typeof obj === 'string') return obj || fallback
+    return obj?.srCyrl ?? obj?.srLatn ?? obj?.en ?? fallback
+  }
+
   const handleEdit = (item) => {
     setEditingId(item.id)
     setFormData({
-      titleSrCyrl: item.title || '',
-      descriptionSrCyrl: item.description || '',
-      contentSrCyrl: item.content || '',
+      titleSrCyrl: item.title?.srCyrl ?? resolve(item.title) ?? '',
+      titleSrLatn: item.title?.srLatn ?? '',
+      titleEn: item.title?.en ?? '',
+      descriptionSrCyrl: item.description?.srCyrl ?? resolve(item.description) ?? '',
+      descriptionSrLatn: item.description?.srLatn ?? '',
+      descriptionEn: item.description?.en ?? '',
+      contentSrCyrl: item.content?.srCyrl ?? resolve(item.content) ?? '',
+      contentSrLatn: item.content?.srLatn ?? '',
+      contentEn: item.content?.en ?? '',
+      coverImage: item.coverImage || '',
       category: item.category || '',
       period: item.period || '',
       origin: item.origin || '',
       featured: item.featured ?? false,
       active: item.active ?? true,
-      generateEn: false,
     })
   }
   
   const handleSubmit = (e) => {
     e.preventDefault()
-    
+    const data = { ...formData }
+    if (!data.titleSrCyrl?.trim() && data.titleSrLatn?.trim()) {
+      data.titleSrCyrl = latnToCyrl(data.titleSrLatn)
+    }
+    if (!data.descriptionSrCyrl?.trim() && data.descriptionSrLatn?.trim()) {
+      data.descriptionSrCyrl = latnToCyrl(data.descriptionSrLatn)
+    }
+    if (!data.contentSrCyrl?.trim() && data.contentSrLatn?.trim()) {
+      data.contentSrCyrl = latnToCyrl(data.contentSrLatn)
+    }
+    if (!data.titleSrLatn?.trim() && data.titleSrCyrl?.trim()) {
+      data.titleSrLatn = cyrlToLatn(data.titleSrCyrl)
+    }
+    if (!data.descriptionSrLatn?.trim() && data.descriptionSrCyrl?.trim()) {
+      data.descriptionSrLatn = cyrlToLatn(data.descriptionSrCyrl)
+    }
+    if (!data.contentSrLatn?.trim() && data.contentSrCyrl?.trim()) {
+      data.contentSrLatn = cyrlToLatn(data.contentSrCyrl)
+    }
     if (editingId) {
-      updateMutation.mutate({ id: editingId, data: formData })
+      updateMutation.mutate({ id: editingId, data })
     } else {
-      createMutation.mutate(formData)
+      createMutation.mutate(data)
     }
   }
   
@@ -148,11 +201,14 @@ function MuseumItemsAdmin() {
                 {editingId ? 'Измени експонат' : 'Додај нови експонат'}
               </Typography>
               <form onSubmit={handleSubmit}>
+                <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
+                  Ћирилица (унос се аутоматски пресликава и на латиницу)
+                </Typography>
                 <TextField
                   fullWidth
                   label="Наслов (ћирилица)"
                   value={formData.titleSrCyrl}
-                  onChange={(e) => setFormData({ ...formData, titleSrCyrl: e.target.value })}
+                  onChange={(e) => updateCyrlAndLatn('title', e.target.value, cyrlToLatn(e.target.value))}
                   required
                   sx={{ mb: 2 }}
                 />
@@ -160,21 +216,90 @@ function MuseumItemsAdmin() {
                   fullWidth
                   label="Опис (ћирилица)"
                   value={formData.descriptionSrCyrl}
-                  onChange={(e) => setFormData({ ...formData, descriptionSrCyrl: e.target.value })}
+                  onChange={(e) => updateCyrlAndLatn('description', e.target.value, cyrlToLatn(e.target.value))}
                   required
                   multiline
-                  rows={3}
+                  rows={2}
                   sx={{ mb: 2 }}
                 />
                 <TextField
                   fullWidth
                   label="Садржај (ћирилица)"
                   value={formData.contentSrCyrl}
-                  onChange={(e) => setFormData({ ...formData, contentSrCyrl: e.target.value })}
+                  onChange={(e) => updateCyrlAndLatn('content', e.target.value, cyrlToLatn(e.target.value))}
                   multiline
-                  rows={4}
+                  rows={2}
                   sx={{ mb: 2 }}
                 />
+
+                <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2, mb: 1 }}>
+                  Латиница (унос се аутоматски пресликава и на ћирилицу)
+                </Typography>
+                <TextField
+                  fullWidth
+                  label="Наслов (латиница)"
+                  value={formData.titleSrLatn}
+                  onChange={(e) => updateCyrlAndLatn('title', latnToCyrl(e.target.value), e.target.value)}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Опис (латиница)"
+                  value={formData.descriptionSrLatn}
+                  onChange={(e) => updateCyrlAndLatn('description', latnToCyrl(e.target.value), e.target.value)}
+                  multiline
+                  rows={2}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Садржај (латиница)"
+                  value={formData.contentSrLatn}
+                  onChange={(e) => updateCyrlAndLatn('content', latnToCyrl(e.target.value), e.target.value)}
+                  multiline
+                  rows={2}
+                  sx={{ mb: 2 }}
+                />
+
+                <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2, mb: 1 }}>
+                  Енглески
+                </Typography>
+                <TextField
+                  fullWidth
+                  label="Title (English)"
+                  value={formData.titleEn}
+                  onChange={(e) => setFormData({ ...formData, titleEn: e.target.value })}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Description (English)"
+                  value={formData.descriptionEn}
+                  onChange={(e) => setFormData({ ...formData, descriptionEn: e.target.value })}
+                  multiline
+                  rows={2}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Content (English)"
+                  value={formData.contentEn}
+                  onChange={(e) => setFormData({ ...formData, contentEn: e.target.value })}
+                  multiline
+                  rows={2}
+                  sx={{ mb: 2 }}
+                />
+
+                <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2, mb: 1 }}>
+                  Слике
+                </Typography>
+                <ImageUpload
+                  label="Насловна слика"
+                  value={formData.coverImage || null}
+                  onChange={(path) => setFormData({ ...formData, coverImage: path || '' })}
+                  sx={{ mb: 2 }}
+                />
+
                 <FormControl fullWidth sx={{ mb: 2 }}>
                   <InputLabel>Категорија</InputLabel>
                   <Select
@@ -221,16 +346,6 @@ function MuseumItemsAdmin() {
                     />
                   }
                   label="Активно"
-                  sx={{ mb: 2, display: 'block' }}
-                />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={formData.generateEn}
-                      onChange={(e) => setFormData({ ...formData, generateEn: e.target.checked })}
-                    />
-                  }
-                  label="Генериши енглески превод"
                   sx={{ mb: 2, display: 'block' }}
                 />
                 <Box sx={{ display: 'flex', gap: 2 }}>

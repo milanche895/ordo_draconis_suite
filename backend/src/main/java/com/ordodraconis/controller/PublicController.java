@@ -2,19 +2,24 @@ package com.ordodraconis.controller;
 
 import com.ordodraconis.dto.AlbumDto;
 import com.ordodraconis.dto.ContactRequest;
+import com.ordodraconis.dto.MuseumItemDto;
 import com.ordodraconis.dto.NewsDto;
 import com.ordodraconis.dto.ProductDto;
 import com.ordodraconis.service.AlbumService;
+import com.ordodraconis.service.MuseumItemService;
 import com.ordodraconis.service.NewsService;
 import com.ordodraconis.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -24,11 +29,17 @@ public class PublicController {
     private final NewsService newsService;
     private final ProductService productService;
     private final AlbumService albumService;
-    
-    public PublicController(NewsService newsService, ProductService productService, AlbumService albumService) {
+    private final MuseumItemService museumItemService;
+    private final MongoTemplate mongoTemplate;
+
+    public PublicController(NewsService newsService, ProductService productService,
+                             AlbumService albumService, MuseumItemService museumItemService,
+                             MongoTemplate mongoTemplate) {
         this.newsService = newsService;
         this.productService = productService;
         this.albumService = albumService;
+        this.museumItemService = museumItemService;
+        this.mongoTemplate = mongoTemplate;
     }
     
     @GetMapping("/news")
@@ -92,6 +103,26 @@ public class PublicController {
                 .orElse(ResponseEntity.notFound().build());
     }
     
+    @GetMapping("/museum")
+    public ResponseEntity<List<MuseumItemDto>> getMuseumItems(
+            @RequestParam(defaultValue = "sr") String lang,
+            @RequestParam(defaultValue = "cyrl") String script
+    ) {
+        return ResponseEntity.ok(museumItemService.getActive(lang, script));
+    }
+
+    /** Provera konekcije: otvori http://localhost:8080/api/public/mongo-info i uporedi "database" sa bazom u Atlasu */
+    @GetMapping("/mongo-info")
+    public ResponseEntity<Map<String, Object>> mongoInfo() {
+        String dbName = mongoTemplate.getDb().getName();
+        long museumCount = museumItemService.count();
+        Map<String, Object> out = new HashMap<>();
+        out.put("database", dbName);
+        out.put("museum_count", museumCount);
+        out.put("collection", "museum");
+        return ResponseEntity.ok(out);
+    }
+
     @PostMapping("/contact")
     public ResponseEntity<Void> contact(@Valid @RequestBody ContactRequest request) {
         // TODO: Send email or save to database

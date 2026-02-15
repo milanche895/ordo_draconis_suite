@@ -64,24 +64,57 @@ function HomePage() {
         sx={{
           position: 'relative',
           height: { xs: '70vh', md: '90vh' },
-          backgroundImage: 'url(/placeholder-hero.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          '&::before': {
-            content: '""',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Fallback slika ako video ne postoji */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            //backgroundImage: 'url(/placeholder-hero1.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            zIndex: 0,
+          }}
+        />
+        {/* Video pozadina */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            zIndex: 1,
+          }}
+        >
+          <source src="/shield.mp4" type="video/mp4" />
+        </video>
+        {/* Tamni overlay za čitljivost teksta */}
+        <Box
+          sx={{
             position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          },
-        }}
-      >
-        <Container sx={{ position: 'relative', zIndex: 1, textAlign: 'center', color: 'white' }}>
+            zIndex: 2,
+          }}
+        />
+        <Container sx={{ position: 'relative', zIndex: 3, textAlign: 'center', color: 'white' }}>
           <Chip
             label={t('home.open')}
             color="success"
@@ -118,30 +151,49 @@ function HomePage() {
         </Container>
       </Box>
       
-      {/* Testimonials Carousel */}
-      <Box sx={{ py: 6, backgroundColor: '#F5F5DC' }}>
-        <Container>
-          <Typography variant="h4" align="center" sx={{ mb: 4 }}>
-            {locale === 'en' ? 'What Visitors Say' : 'Шта кажу посетиоци'}
-          </Typography>
-          <Grid container spacing={3}>
-            {testimonials.map((testimonial, idx) => (
-              <Grid item xs={12} md={4} key={idx}>
-                <Card sx={{ height: '100%', textAlign: 'center' }}>
-                  <CardContent>
-                    <Typography variant="body1" sx={{ mb: 2, fontStyle: 'italic' }}>
-                      "{testimonial.text}"
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      - {testimonial.author}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
+      {/* Latest News */}
+      {newsData && newsData.content && newsData.content.length > 0 && (
+        <Box sx={{ py: 8 }}>
+          <Container>
+            <Typography variant="h3" align="center" sx={{ mb: 6 }}>
+              {locale === 'en' ? 'Latest News' : 'Најновије вести'}
+            </Typography>
+            <Grid container spacing={4}>
+              {newsData.content.slice(0, 3).map((news) => (
+                <Grid item xs={12} md={4} key={news.id}>
+                  <Card
+                    sx={{ cursor: 'pointer', height: '100%' }}
+                    onClick={() => navigate(`${prefix}/${locale === 'en' ? 'news' : 'vesti'}/${news.slug}`)}
+                  >
+                    {news.coverImage && (
+                      <CardMedia
+                        component="img"
+                        height="200"
+                        image={news.coverImage}
+                        alt={news.title}
+                      />
+                    )}
+                    <CardContent>
+                      <Typography variant="h6" sx={{ mb: 1 }}>
+                        {news.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        {news.summary}
+                      </Typography>
+                      <Button size="small" onClick={(e) => {
+                        e.stopPropagation()
+                        navigate(`${prefix}/${locale === 'en' ? 'news' : 'vesti'}/${news.slug}`)
+                      }}>
+                        {t('common.readMore')}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </Container>
+        </Box>
+      )}
       
       {/* Feature Cards */}
       <Box sx={{ py: 8 }}>
@@ -211,49 +263,30 @@ function HomePage() {
         </Container>
       </Box>
       
-      {/* Latest News */}
-      {newsData && newsData.content && newsData.content.length > 0 && (
-        <Box sx={{ py: 8 }}>
-          <Container>
-            <Typography variant="h3" align="center" sx={{ mb: 6 }}>
-              {locale === 'en' ? 'Latest News' : 'Најновије вести'}
-            </Typography>
-            <Grid container spacing={4}>
-              {newsData.content.slice(0, 3).map((news) => (
-                <Grid item xs={12} md={4} key={news.id}>
-                  <Card
-                    sx={{ cursor: 'pointer', height: '100%' }}
-                    onClick={() => navigate(`${prefix}/${locale === 'en' ? 'news' : 'vesti'}/${news.slug}`)}
-                  >
-                    {news.coverImage && (
-                      <CardMedia
-                        component="img"
-                        height="200"
-                        image={news.coverImage}
-                        alt={news.title}
-                      />
-                    )}
-                    <CardContent>
-                      <Typography variant="h6" sx={{ mb: 1 }}>
-                        {news.title}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        {news.summary}
-                      </Typography>
-                      <Button size="small" onClick={(e) => {
-                        e.stopPropagation()
-                        navigate(`${prefix}/${locale === 'en' ? 'news' : 'vesti'}/${news.slug}`)
-                      }}>
-                        {t('common.readMore')}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Container>
-        </Box>
-      )}
+      {/* Testimonials Carousel */}
+      <Box sx={{ py: 6, backgroundColor: '#F5F5DC' }}>
+        <Container>
+          <Typography variant="h4" align="center" sx={{ mb: 4 }}>
+            {locale === 'en' ? 'What Visitors Say' : 'Шта кажу посетиоци'}
+          </Typography>
+          <Grid container spacing={3}>
+            {testimonials.map((testimonial, idx) => (
+              <Grid item xs={12} md={4} key={idx}>
+                <Card sx={{ height: '100%', textAlign: 'center' }}>
+                  <CardContent>
+                    <Typography variant="body1" sx={{ mb: 2, fontStyle: 'italic' }}>
+                      "{testimonial.text}"
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      - {testimonial.author}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
     </Box>
   )
 }

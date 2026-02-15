@@ -4,6 +4,7 @@ import com.ordodraconis.dto.*;
 import com.ordodraconis.model.Media;
 import com.ordodraconis.service.AlbumService;
 import com.ordodraconis.service.MediaService;
+import com.ordodraconis.service.MuseumItemService;
 import com.ordodraconis.service.NewsService;
 import com.ordodraconis.service.ProductService;
 import jakarta.validation.Valid;
@@ -17,18 +18,21 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
-    
+
     private final NewsService newsService;
     private final ProductService productService;
     private final AlbumService albumService;
     private final MediaService mediaService;
+    private final MuseumItemService museumItemService;
     
-    public AdminController(NewsService newsService, ProductService productService, 
-                          AlbumService albumService, MediaService mediaService) {
+    public AdminController(NewsService newsService, ProductService productService,
+                          AlbumService albumService, MediaService mediaService,
+                          MuseumItemService museumItemService) {
         this.newsService = newsService;
         this.productService = productService;
         this.albumService = albumService;
         this.mediaService = mediaService;
+        this.museumItemService = museumItemService;
     }
     
     // News CRUD
@@ -139,28 +143,25 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
     
-    // Museum Item CRUD - TODO: Implement MuseumItemService
-    @GetMapping("/museum-items")
-    public ResponseEntity<List<?>> getAllMuseumItems() {
-        // TODO: Return all museum items
-        return ResponseEntity.ok(List.of());
+    // Museum Item CRUD
+    @GetMapping("/museum")
+    public ResponseEntity<List<MuseumItemDto>> getAllMuseumItems() {
+        return ResponseEntity.ok(museumItemService.getAll("sr", "cyrl"));
     }
     
-    @PostMapping("/museum-items")
-    public ResponseEntity<?> createMuseumItem(@Valid @RequestBody Object dto) {
-        // TODO: Implement museum item creation
-        return ResponseEntity.ok().build();
+    @PostMapping("/museum")
+    public ResponseEntity<MuseumItemDto> createMuseumItem(@Valid @RequestBody MuseumItemCreateUpdateDto dto) {
+        return ResponseEntity.ok(museumItemService.create(dto));
     }
     
-    @PutMapping("/museum-items/{id}")
-    public ResponseEntity<?> updateMuseumItem(@PathVariable String id, @Valid @RequestBody Object dto) {
-        // TODO: Implement museum item update
-        return ResponseEntity.ok().build();
+    @PutMapping("/museum/{id}")
+    public ResponseEntity<MuseumItemDto> updateMuseumItem(@PathVariable String id, @Valid @RequestBody MuseumItemCreateUpdateDto dto) {
+        return ResponseEntity.ok(museumItemService.update(id, dto));
     }
     
-    @DeleteMapping("/museum-items/{id}")
+    @DeleteMapping("/museum/{id}")
     public ResponseEntity<Void> deleteMuseumItem(@PathVariable String id) {
-        // TODO: Implement museum item deletion
+        museumItemService.delete(id);
         return ResponseEntity.ok().build();
     }
 }

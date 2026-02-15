@@ -40,7 +40,7 @@ function AdminDashboardPage() {
           <Tab label="Производи" onClick={() => navigate('/admin/products')} />
           <Tab label="Албуми" onClick={() => navigate('/admin/albums')} />
           <Tab label="Радионице" onClick={() => navigate('/admin/workshops')} />
-          <Tab label="Музеј" onClick={() => navigate('/admin/museum-items')} />
+          <Tab label="Музеј" onClick={() => navigate('/admin/museum')} />
           <Tab label="Медија" onClick={() => navigate('/admin/media')} />
         </Tabs>
         
@@ -49,7 +49,7 @@ function AdminDashboardPage() {
           <Route path="products/*" element={<ProductsAdmin />} />
           <Route path="albums/*" element={<AlbumsAdmin />} />
           <Route path="workshops/*" element={<WorkshopsAdmin />} />
-          <Route path="museum-items/*" element={<MuseumItemsAdmin />} />
+          <Route path="museum/*" element={<MuseumItemsAdmin />} />
           <Route path="media/*" element={<MediaAdmin />} />
           <Route path="*" element={<NewsAdmin />} />
         </Routes>

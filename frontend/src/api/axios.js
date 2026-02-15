@@ -1,7 +1,10 @@
 import axios from 'axios'
 
+// U developmentu šalji zahteve direktno na backend (8080); u produkciji koristi relativni /api
+const baseURL = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? 'http://localhost:8080/api' : '/api')
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
   },
