@@ -16,11 +16,15 @@ function ImageUpload({ value, onChange, multiple = false, label = 'Upload Image'
   const [preview, setPreview] = useState(value || (multiple ? [] : null))
   const inputIdRef = useRef(`image-upload-${Math.random().toString(36).substr(2, 9)}`)
   const fileInputRef = useRef(null)
+  // Ref holds current URLs so parallel uploads always append to latest list (preview state is stale in closure)
+  const urlsRef = useRef(multiple ? (Array.isArray(value) ? value : []) : (value || null))
   
-  // Sync preview with value prop when it changes externally
+  // Sync preview and ref with value prop when it changes externally
   useEffect(() => {
     if (value !== undefined) {
-      setPreview(value || (multiple ? [] : null))
+      const v = value || (multiple ? [] : null)
+      setPreview(v)
+      urlsRef.current = v
     }
   }, [value, multiple])
   
@@ -35,7 +39,9 @@ function ImageUpload({ value, onChange, multiple = false, label = 'Upload Image'
     },
     onSuccess: (data) => {
       if (multiple) {
-        const newUrls = [...(preview || []), data.path]
+        const current = Array.isArray(urlsRef.current) ? urlsRef.current : []
+        const newUrls = [...current, data.path]
+        urlsRef.current = newUrls
         setPreview(newUrls)
         onChange(newUrls)
       } else {
@@ -57,6 +63,7 @@ function ImageUpload({ value, onChange, multiple = false, label = 'Upload Image'
   const handleRemove = (index) => {
     if (multiple) {
       const newUrls = preview.filter((_, i) => i !== index)
+      urlsRef.current = newUrls
       setPreview(newUrls)
       onChange(newUrls)
     } else {

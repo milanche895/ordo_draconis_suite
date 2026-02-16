@@ -4,6 +4,7 @@ import com.ordodraconis.dto.*;
 import com.ordodraconis.model.Media;
 import com.ordodraconis.service.AlbumService;
 import com.ordodraconis.service.MediaService;
+import com.ordodraconis.service.FestivalService;
 import com.ordodraconis.service.MuseumItemService;
 import com.ordodraconis.service.NewsService;
 import com.ordodraconis.service.ProductService;
@@ -24,15 +25,17 @@ public class AdminController {
     private final AlbumService albumService;
     private final MediaService mediaService;
     private final MuseumItemService museumItemService;
+    private final FestivalService festivalService;
     
     public AdminController(NewsService newsService, ProductService productService,
                           AlbumService albumService, MediaService mediaService,
-                          MuseumItemService museumItemService) {
+                          MuseumItemService museumItemService, FestivalService festivalService) {
         this.newsService = newsService;
         this.productService = productService;
         this.albumService = albumService;
         this.mediaService = mediaService;
         this.museumItemService = museumItemService;
+        this.festivalService = festivalService;
     }
     
     // News CRUD
@@ -162,6 +165,28 @@ public class AdminController {
     @DeleteMapping("/museum/{id}")
     public ResponseEntity<Void> deleteMuseumItem(@PathVariable String id) {
         museumItemService.delete(id);
+        return ResponseEntity.ok().build();
+    }
+    
+    // Festival CRUD
+    @GetMapping("/festivals")
+    public ResponseEntity<List<FestivalDto>> getAllFestivals() {
+        return ResponseEntity.ok(festivalService.getAll("sr", "cyrl"));
+    }
+    
+    @PostMapping("/festivals")
+    public ResponseEntity<FestivalDto> createFestival(@Valid @RequestBody FestivalCreateUpdateDto dto) {
+        return ResponseEntity.ok(festivalService.create(dto));
+    }
+    
+    @PutMapping("/festivals/{id}")
+    public ResponseEntity<FestivalDto> updateFestival(@PathVariable String id, @Valid @RequestBody FestivalCreateUpdateDto dto) {
+        return ResponseEntity.ok(festivalService.update(id, dto));
+    }
+    
+    @DeleteMapping("/festivals/{id}")
+    public ResponseEntity<Void> deleteFestival(@PathVariable String id) {
+        festivalService.delete(id);
         return ResponseEntity.ok().build();
     }
 }

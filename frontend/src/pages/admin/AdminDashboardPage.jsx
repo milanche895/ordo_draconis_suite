@@ -8,6 +8,7 @@ import AlbumsAdmin from './AlbumsAdmin'
 import MediaAdmin from './MediaAdmin'
 import WorkshopsAdmin from './WorkshopsAdmin'
 import MuseumItemsAdmin from './MuseumItemsAdmin'
+import FestivalsAdmin from './FestivalsAdmin'
 
 function AdminDashboardPage() {
   const navigate = useNavigate()
@@ -41,6 +42,7 @@ function AdminDashboardPage() {
           <Tab label="Албуми" onClick={() => navigate('/admin/albums')} />
           <Tab label="Радионице" onClick={() => navigate('/admin/workshops')} />
           <Tab label="Музеј" onClick={() => navigate('/admin/museum')} />
+          <Tab label="Штит фестивал" onClick={() => navigate('/admin/festivals')} />
           <Tab label="Медија" onClick={() => navigate('/admin/media')} />
         </Tabs>
         
@@ -50,6 +52,7 @@ function AdminDashboardPage() {
           <Route path="albums/*" element={<AlbumsAdmin />} />
           <Route path="workshops/*" element={<WorkshopsAdmin />} />
           <Route path="museum/*" element={<MuseumItemsAdmin />} />
+          <Route path="festivals/*" element={<FestivalsAdmin />} />
           <Route path="media/*" element={<MediaAdmin />} />
           <Route path="*" element={<NewsAdmin />} />
         </Routes>

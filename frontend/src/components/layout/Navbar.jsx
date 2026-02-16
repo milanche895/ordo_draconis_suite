@@ -50,8 +50,11 @@ function Navbar() {
     setAnchorEl(null)
   }
   
+  const festivalPath = `${prefix}/${locale === 'en' ? 'stit-festival' : 'stit-festival'}`
+  
   const navItems = [
     { key: 'home', path: prefix },
+    { key: 'festival', path: festivalPath, highlight: true },
     { key: 'museum', path: `${prefix}/${locale === 'en' ? 'museum' : 'muzej'}` },
     { key: 'workshops', path: `${prefix}/${locale === 'en' ? 'workshops' : 'radionice'}` },
     { key: 'gallery', path: `${prefix}/${locale === 'en' ? 'gallery' : 'galerija'}` },
@@ -83,9 +86,15 @@ function Navbar() {
                 key={item.key}
                 color="inherit"
                 onClick={() => navigate(item.path)}
+                variant={item.highlight ? 'outlined' : 'text'}
                 sx={{
-                  color: location.pathname === item.path ? '#D4AF37' : 'inherit',
-                  fontWeight: location.pathname === item.path ? 600 : 400,
+                  color: item.highlight ? '#D4AF37' : (location.pathname === item.path ? '#D4AF37' : 'inherit'),
+                  fontWeight: item.highlight ? 700 : (location.pathname === item.path ? 600 : 400),
+                  borderColor: item.highlight ? '#D4AF37' : 'transparent',
+                  '&:hover': item.highlight ? {
+                    borderColor: '#D4AF37',
+                    backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                  } : {},
                 }}
               >
                 {t(`nav.${item.key}`)}
@@ -125,11 +134,19 @@ function Navbar() {
               <Button
                 key={item.key}
                 color="inherit"
+                variant={item.highlight ? 'outlined' : 'text'}
                 onClick={() => {
                   navigate(item.path)
                   setMobileMenuOpen(false)
                 }}
-                sx={{ justifyContent: 'flex-start', px: 3 }}
+                sx={{
+                  justifyContent: 'flex-start',
+                  px: 3,
+                  my: item.highlight ? 1 : 0,
+                  borderColor: item.highlight ? '#D4AF37' : 'transparent',
+                  color: item.highlight ? '#D4AF37' : 'inherit',
+                  fontWeight: item.highlight ? 700 : 400,
+                }}
               >
                 {t(`nav.${item.key}`)}
               </Button>

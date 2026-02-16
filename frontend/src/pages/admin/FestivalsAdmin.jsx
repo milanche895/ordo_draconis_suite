@@ -1,0 +1,391 @@
+import { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  TextField,
+  Typography,
+  Grid,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@mui/material'
+import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material'
+import api from '../../api/axios'
+import ImageUpload from '../../components/admin/ImageUpload'
+import { cyrlToLatn, latnToCyrl } from '../../utils/transliterate'
+
+function FestivalsAdmin() {
+  const queryClient = useQueryClient()
+  const currentYear = new Date().getFullYear()
+  const [formData, setFormData] = useState({
+    year: currentYear,
+    titleSrCyrl: '',
+    titleSrLatn: '',
+    titleEn: '',
+    descriptionSrCyrl: '',
+    descriptionSrLatn: '',
+    descriptionEn: '',
+    contentSrCyrl: '',
+    contentSrLatn: '',
+    contentEn: '',
+    coverImage: '',
+    galleryImages: [],
+  })
+  const [editingId, setEditingId] = useState(null)
+  const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null })
+
+  const updateCyrlAndLatn = (field, cyrlValue, latnValue) => {
+    const updates = {}
+    if (field === 'title') {
+      updates.titleSrCyrl = cyrlValue
+      updates.titleSrLatn = latnValue
+    } else if (field === 'description') {
+      updates.descriptionSrCyrl = cyrlValue
+      updates.descriptionSrLatn = latnValue
+    } else if (field === 'content') {
+      updates.contentSrCyrl = cyrlValue
+      updates.contentSrLatn = latnValue
+    }
+    setFormData((prev) => ({ ...prev, ...updates }))
+  }
+
+  const { data: festivals = [], isLoading } = useQuery({
+    queryKey: ['admin-festivals'],
+    queryFn: async () => {
+      try {
+        const response = await api.get('/admin/festivals')
+        return response.data || []
+      } catch (error) {
+        console.error('Error fetching festivals:', error)
+        return []
+      }
+    },
+  })
+
+  const createMutation = useMutation({
+    mutationFn: (data) => api.post('/admin/festivals', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['admin-festivals'])
+      resetForm()
+    },
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }) => api.put(`/admin/festivals/${id}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['admin-festivals'])
+      resetForm()
+    },
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => api.delete(`/admin/festivals/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['admin-festivals'])
+      setDeleteDialog({ open: false, id: null })
+    },
+  })
+
+  const resetForm = () => {
+    setFormData({
+      year: currentYear,
+      titleSrCyrl: '',
+      titleSrLatn: '',
+      titleEn: '',
+      descriptionSrCyrl: '',
+      descriptionSrLatn: '',
+      descriptionEn: '',
+      contentSrCyrl: '',
+      contentSrLatn: '',
+      contentEn: '',
+      coverImage: '',
+      galleryImages: [],
+    })
+    setEditingId(null)
+  }
+
+  const resolve = (obj, fallback = '') => {
+    if (typeof obj === 'string') return obj || fallback
+    return obj?.srCyrl ?? obj?.srLatn ?? obj?.en ?? fallback
+  }
+
+  const handleEdit = (item) => {
+    setEditingId(item.id)
+    setFormData({
+      year: item.year || currentYear,
+      titleSrCyrl: item.title?.srCyrl ?? resolve(item.title) ?? '',
+      titleSrLatn: item.title?.srLatn ?? '',
+      titleEn: item.title?.en ?? '',
+      descriptionSrCyrl: item.description?.srCyrl ?? resolve(item.description) ?? '',
+      descriptionSrLatn: item.description?.srLatn ?? '',
+      descriptionEn: item.description?.en ?? '',
+      contentSrCyrl: item.content?.srCyrl ?? resolve(item.content) ?? '',
+      contentSrLatn: item.content?.srLatn ?? '',
+      contentEn: item.content?.en ?? '',
+      coverImage: item.coverImage || '',
+      galleryImages: item.galleryImages || [],
+    })
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const data = { ...formData }
+    if (!data.titleSrCyrl?.trim() && data.titleSrLatn?.trim()) {
+      data.titleSrCyrl = latnToCyrl(data.titleSrLatn)
+    }
+    if (!data.descriptionSrCyrl?.trim() && data.descriptionSrLatn?.trim()) {
+      data.descriptionSrCyrl = latnToCyrl(data.descriptionSrLatn)
+    }
+    if (!data.contentSrCyrl?.trim() && data.contentSrLatn?.trim()) {
+      data.contentSrCyrl = latnToCyrl(data.contentSrLatn)
+    }
+    if (!data.titleSrLatn?.trim() && data.titleSrCyrl?.trim()) {
+      data.titleSrLatn = cyrlToLatn(data.titleSrCyrl)
+    }
+    if (!data.descriptionSrLatn?.trim() && data.descriptionSrCyrl?.trim()) {
+      data.descriptionSrLatn = cyrlToLatn(data.descriptionSrCyrl)
+    }
+    if (!data.contentSrLatn?.trim() && data.contentSrCyrl?.trim()) {
+      data.contentSrLatn = cyrlToLatn(data.contentSrCyrl)
+    }
+    if (editingId) {
+      updateMutation.mutate({ id: editingId, data })
+    } else {
+      createMutation.mutate(data)
+    }
+  }
+
+  const handleDelete = (id) => {
+    deleteMutation.mutate(id)
+  }
+
+  return (
+    <Box>
+      <Typography variant="h5" sx={{ mb: 4 }}>
+        Управљање фестивалима „Штит фестивал"
+      </Typography>
+
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        Додајте фестивал за сваку годину. Галерија може садржати 10–15 слика.
+      </Typography>
+
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={6}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                {editingId ? 'Измени фестивал' : 'Додај нови фестивал'}
+              </Typography>
+              <form onSubmit={handleSubmit}>
+                <TextField
+                  fullWidth
+                  type="number"
+                  label="Година"
+                  value={formData.year}
+                  onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value, 10) || currentYear })}
+                  inputProps={{ min: 2000, max: 2100 }}
+                  required
+                  sx={{ mb: 2 }}
+                />
+
+                <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
+                  Ћирилица
+                </Typography>
+                <TextField
+                  fullWidth
+                  label="Наслов (ћирилица)"
+                  value={formData.titleSrCyrl}
+                  onChange={(e) => updateCyrlAndLatn('title', e.target.value, cyrlToLatn(e.target.value))}
+                  required
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Опис (ћирилица)"
+                  value={formData.descriptionSrCyrl}
+                  onChange={(e) => updateCyrlAndLatn('description', e.target.value, cyrlToLatn(e.target.value))}
+                  required
+                  multiline
+                  rows={2}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Садржај (ћирилица)"
+                  value={formData.contentSrCyrl}
+                  onChange={(e) => updateCyrlAndLatn('content', e.target.value, cyrlToLatn(e.target.value))}
+                  multiline
+                  rows={3}
+                  sx={{ mb: 2 }}
+                />
+
+                <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2, mb: 1 }}>
+                  Латиница
+                </Typography>
+                <TextField
+                  fullWidth
+                  label="Наслов (латиница)"
+                  value={formData.titleSrLatn}
+                  onChange={(e) => updateCyrlAndLatn('title', latnToCyrl(e.target.value), e.target.value)}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Опис (латиница)"
+                  value={formData.descriptionSrLatn}
+                  onChange={(e) => updateCyrlAndLatn('description', latnToCyrl(e.target.value), e.target.value)}
+                  multiline
+                  rows={2}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Садржај (латиница)"
+                  value={formData.contentSrLatn}
+                  onChange={(e) => updateCyrlAndLatn('content', latnToCyrl(e.target.value), e.target.value)}
+                  multiline
+                  rows={3}
+                  sx={{ mb: 2 }}
+                />
+
+                <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2, mb: 1 }}>
+                  Енглески
+                </Typography>
+                <TextField
+                  fullWidth
+                  label="Title (English)"
+                  value={formData.titleEn}
+                  onChange={(e) => setFormData({ ...formData, titleEn: e.target.value })}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Description (English)"
+                  value={formData.descriptionEn}
+                  onChange={(e) => setFormData({ ...formData, descriptionEn: e.target.value })}
+                  multiline
+                  rows={2}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Content (English)"
+                  value={formData.contentEn}
+                  onChange={(e) => setFormData({ ...formData, contentEn: e.target.value })}
+                  multiline
+                  rows={3}
+                  sx={{ mb: 2 }}
+                />
+
+                <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2, mb: 1 }}>
+                  Слике
+                </Typography>
+                <ImageUpload
+                  label="Насловна слика"
+                  value={formData.coverImage || null}
+                  onChange={(path) => setFormData({ ...formData, coverImage: path || '' })}
+                  sx={{ mb: 2 }}
+                />
+                <ImageUpload
+                  label="Галерија (10–15 слика)"
+                  multiple
+                  value={formData.galleryImages}
+                  onChange={(urls) => setFormData({ ...formData, galleryImages: urls || [] })}
+                  sx={{ mb: 2 }}
+                />
+
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                  <Button type="submit" variant="contained" color="primary">
+                    {editingId ? 'Сачувај измене' : 'Креирај'}
+                  </Button>
+                  {editingId && (
+                    <Button variant="outlined" onClick={resetForm}>
+                      Откажи
+                    </Button>
+                  )}
+                </Box>
+              </form>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Година</TableCell>
+                  <TableCell>Наслов</TableCell>
+                  <TableCell>Акције</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={3} align="center">
+                      Учитавање...
+                    </TableCell>
+                  </TableRow>
+                ) : festivals.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={3} align="center">
+                      Нема фестивала
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  festivals.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell>{item.year}</TableCell>
+                      <TableCell>{item.title || `Štit festival ${item.year}`}</TableCell>
+                      <TableCell>
+                        <IconButton size="small" onClick={() => handleEdit(item)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={() => setDeleteDialog({ open: true, id: item.id })}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+      </Grid>
+
+      <Dialog open={deleteDialog.open} onClose={() => setDeleteDialog({ open: false, id: null })}>
+        <DialogTitle>Избриши фестивал?</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Да ли сте сигурни да желите да избришете овај фестивал? Ова акција се не може поништити.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialog({ open: false, id: null })}>Откажи</Button>
+          <Button onClick={() => handleDelete(deleteDialog.id)} color="error" variant="contained">
+            Избриши
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  )
+}
+
+export default FestivalsAdmin

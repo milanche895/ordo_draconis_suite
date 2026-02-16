@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import AppShell from './components/layout/AppShell'
 import HomePage from './pages/HomePage'
 import MuseumPage from './pages/MuseumPage'
+import FestivalsPage from './pages/FestivalsPage'
+import FestivalDetailPage from './pages/FestivalDetailPage'
 import WorkshopsPage from './pages/WorkshopsPage'
 import GalleryPage from './pages/GalleryPage'
 import NewsPage from './pages/NewsPage'
@@ -35,6 +37,13 @@ function App() {
         <Route path="/sr" element={<HomePage />} />
         <Route path="/sr-latn" element={<HomePage />} />
         <Route path="/en" element={<HomePage />} />
+        
+        <Route path="/sr/stit-festival" element={<FestivalsPage />} />
+        <Route path="/sr/stit-festival/:year" element={<FestivalDetailPage />} />
+        <Route path="/sr-latn/stit-festival" element={<FestivalsPage />} />
+        <Route path="/sr-latn/stit-festival/:year" element={<FestivalDetailPage />} />
+        <Route path="/en/stit-festival" element={<FestivalsPage />} />
+        <Route path="/en/stit-festival/:year" element={<FestivalDetailPage />} />
         
         <Route path="/sr/muzej" element={<MuseumPage />} />
         <Route path="/sr-latn/muzej" element={<MuseumPage />} />

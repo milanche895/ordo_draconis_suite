@@ -6,6 +6,7 @@ const resources = {
     translation: {
       nav: {
         home: 'Почетна',
+        festival: 'Штит фестивал',
         museum: 'Музеј',
         workshops: 'Раднице',
         gallery: 'Галерија',
@@ -38,6 +39,7 @@ const resources = {
     translation: {
       nav: {
         home: 'Početna',
+        festival: 'Štit festival',
         museum: 'Muzej',
         workshops: 'Radnice',
         gallery: 'Galerija',
@@ -70,6 +72,7 @@ const resources = {
     translation: {
       nav: {
         home: 'Home',
+        festival: 'Shield Festival',
         museum: 'Museum',
         workshops: 'Workshops',
         gallery: 'Gallery',

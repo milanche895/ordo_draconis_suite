@@ -2,10 +2,12 @@ package com.ordodraconis.controller;
 
 import com.ordodraconis.dto.AlbumDto;
 import com.ordodraconis.dto.ContactRequest;
+import com.ordodraconis.dto.FestivalDto;
 import com.ordodraconis.dto.MuseumItemDto;
 import com.ordodraconis.dto.NewsDto;
 import com.ordodraconis.dto.ProductDto;
 import com.ordodraconis.service.AlbumService;
+import com.ordodraconis.service.FestivalService;
 import com.ordodraconis.service.MuseumItemService;
 import com.ordodraconis.service.NewsService;
 import com.ordodraconis.service.ProductService;
@@ -30,15 +32,17 @@ public class PublicController {
     private final ProductService productService;
     private final AlbumService albumService;
     private final MuseumItemService museumItemService;
+    private final FestivalService festivalService;
     private final MongoTemplate mongoTemplate;
 
     public PublicController(NewsService newsService, ProductService productService,
                              AlbumService albumService, MuseumItemService museumItemService,
-                             MongoTemplate mongoTemplate) {
+                             FestivalService festivalService, MongoTemplate mongoTemplate) {
         this.newsService = newsService;
         this.productService = productService;
         this.albumService = albumService;
         this.museumItemService = museumItemService;
+        this.festivalService = festivalService;
         this.mongoTemplate = mongoTemplate;
     }
     
@@ -100,6 +104,25 @@ public class PublicController {
     ) {
         Optional<AlbumDto> album = albumService.getById(id, lang, script);
         return album.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @GetMapping("/festivals")
+    public ResponseEntity<List<FestivalDto>> getFestivals(
+            @RequestParam(defaultValue = "sr") String lang,
+            @RequestParam(defaultValue = "cyrl") String script
+    ) {
+        return ResponseEntity.ok(festivalService.getAll(lang, script));
+    }
+    
+    @GetMapping("/festivals/{year}")
+    public ResponseEntity<FestivalDto> getFestivalByYear(
+            @PathVariable int year,
+            @RequestParam(defaultValue = "sr") String lang,
+            @RequestParam(defaultValue = "cyrl") String script
+    ) {
+        Optional<FestivalDto> festival = festivalService.getByYear(year, lang, script);
+        return festival.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
     
