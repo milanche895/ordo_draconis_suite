@@ -32,7 +32,7 @@ function HomePage() {
       path: `${prefix}/${locale === 'en' ? 'museum' : 'muzej'}`,
     },
     {
-      title: locale === 'en' ? 'Workshops' : 'Раднице',
+      title: locale === 'en' ? 'Workshops' : 'Радионице',
       description: locale === 'en' ? 'Learn medieval crafts' : 'Научите средњовековне занате',
       icon: '⚒️',
       path: `${prefix}/${locale === 'en' ? 'workshops' : 'radionice'}`,

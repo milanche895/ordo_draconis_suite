@@ -6,11 +6,13 @@ import com.ordodraconis.dto.FestivalDto;
 import com.ordodraconis.dto.MuseumItemDto;
 import com.ordodraconis.dto.NewsDto;
 import com.ordodraconis.dto.ProductDto;
+import com.ordodraconis.dto.WorkshopDto;
 import com.ordodraconis.service.AlbumService;
 import com.ordodraconis.service.FestivalService;
 import com.ordodraconis.service.MuseumItemService;
 import com.ordodraconis.service.NewsService;
 import com.ordodraconis.service.ProductService;
+import com.ordodraconis.service.WorkshopService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,16 +35,19 @@ public class PublicController {
     private final AlbumService albumService;
     private final MuseumItemService museumItemService;
     private final FestivalService festivalService;
+    private final WorkshopService workshopService;
     private final MongoTemplate mongoTemplate;
 
     public PublicController(NewsService newsService, ProductService productService,
                              AlbumService albumService, MuseumItemService museumItemService,
-                             FestivalService festivalService, MongoTemplate mongoTemplate) {
+                             FestivalService festivalService, WorkshopService workshopService,
+                             MongoTemplate mongoTemplate) {
         this.newsService = newsService;
         this.productService = productService;
         this.albumService = albumService;
         this.museumItemService = museumItemService;
         this.festivalService = festivalService;
+        this.workshopService = workshopService;
         this.mongoTemplate = mongoTemplate;
     }
     
@@ -132,6 +137,14 @@ public class PublicController {
             @RequestParam(defaultValue = "cyrl") String script
     ) {
         return ResponseEntity.ok(museumItemService.getActive(lang, script));
+    }
+
+    @GetMapping("/workshops")
+    public ResponseEntity<List<WorkshopDto>> getWorkshops(
+            @RequestParam(defaultValue = "sr") String lang,
+            @RequestParam(defaultValue = "cyrl") String script
+    ) {
+        return ResponseEntity.ok(workshopService.getActive(lang, script));
     }
 
     /** Provera konekcije: otvori http://localhost:8080/api/public/mongo-info i uporedi "database" sa bazom u Atlasu */

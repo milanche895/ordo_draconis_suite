@@ -25,6 +25,7 @@ import {
 } from '@mui/material'
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material'
 import api from '../../api/axios'
+import ImageUpload from '../../components/admin/ImageUpload'
 
 function WorkshopsAdmin() {
   const queryClient = useQueryClient()
@@ -33,11 +34,10 @@ function WorkshopsAdmin() {
     descriptionSrCyrl: '',
     contentSrCyrl: '',
     coverImage: '',
-    galleryImages: [],
     duration: '',
     maxParticipants: '',
     price: '',
-    currency: 'RSD',
+    currency: 'EUR',
     active: true,
     generateEn: false,
   })
@@ -87,11 +87,10 @@ function WorkshopsAdmin() {
       descriptionSrCyrl: '',
       contentSrCyrl: '',
       coverImage: '',
-      galleryImages: [],
       duration: '',
       maxParticipants: '',
       price: '',
-      currency: 'RSD',
+      currency: 'EUR',
       active: true,
       generateEn: false,
     })
@@ -104,10 +103,11 @@ function WorkshopsAdmin() {
       titleSrCyrl: workshop.title || '',
       descriptionSrCyrl: workshop.description || '',
       contentSrCyrl: workshop.content || '',
+      coverImage: workshop.coverImage || '',
       duration: workshop.duration || '',
       maxParticipants: workshop.maxParticipants || '',
       price: workshop.price || '',
-      currency: workshop.currency || 'RSD',
+      currency: workshop.currency || 'EUR',
       active: workshop.active ?? true,
       generateEn: false,
     })
@@ -180,13 +180,6 @@ function WorkshopsAdmin() {
                   onChange={(url) => setFormData({ ...formData, coverImage: url })}
                   sx={{ mb: 2 }}
                 />
-                <ImageUpload
-                  label="Gallery Images"
-                  multiple
-                  value={formData.galleryImages}
-                  onChange={(urls) => setFormData({ ...formData, galleryImages: urls })}
-                  sx={{ mb: 2 }}
-                />
                 <Grid container spacing={2} sx={{ mb: 2 }}>
                   <Grid item xs={6}>
                     <TextField
@@ -213,7 +206,7 @@ function WorkshopsAdmin() {
                   <Grid item xs={6}>
                     <TextField
                       fullWidth
-                      label="Цена"
+                      label="Цена (EUR)"
                       type="number"
                       value={formData.price}
                       onChange={(e) => setFormData({ ...formData, price: e.target.value })}
@@ -223,15 +216,10 @@ function WorkshopsAdmin() {
                     <TextField
                       fullWidth
                       label="Валута"
-                      value={formData.currency}
-                      onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                      select
-                      SelectProps={{ native: true }}
-                    >
-                      <option value="RSD">RSD</option>
-                      <option value="EUR">EUR</option>
-                      <option value="USD">USD</option>
-                    </TextField>
+                      value="EUR"
+                      disabled
+                      sx={{ '& .MuiInputBase-input': { color: 'text.secondary' } }}
+                    />
                   </Grid>
                 </Grid>
                 <FormControlLabel

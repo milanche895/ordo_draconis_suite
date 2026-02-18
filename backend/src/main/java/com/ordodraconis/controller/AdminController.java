@@ -8,6 +8,7 @@ import com.ordodraconis.service.FestivalService;
 import com.ordodraconis.service.MuseumItemService;
 import com.ordodraconis.service.NewsService;
 import com.ordodraconis.service.ProductService;
+import com.ordodraconis.service.WorkshopService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,16 +27,19 @@ public class AdminController {
     private final MediaService mediaService;
     private final MuseumItemService museumItemService;
     private final FestivalService festivalService;
-    
+    private final WorkshopService workshopService;
+
     public AdminController(NewsService newsService, ProductService productService,
                           AlbumService albumService, MediaService mediaService,
-                          MuseumItemService museumItemService, FestivalService festivalService) {
+                          MuseumItemService museumItemService, FestivalService festivalService,
+                          WorkshopService workshopService) {
         this.newsService = newsService;
         this.productService = productService;
         this.albumService = albumService;
         this.mediaService = mediaService;
         this.museumItemService = museumItemService;
         this.festivalService = festivalService;
+        this.workshopService = workshopService;
     }
     
     // News CRUD
@@ -121,28 +125,25 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
     
-    // Workshop CRUD - TODO: Implement WorkshopService
+    // Workshop CRUD
     @GetMapping("/workshops")
-    public ResponseEntity<List<?>> getAllWorkshops() {
-        // TODO: Return all workshops
-        return ResponseEntity.ok(List.of());
+    public ResponseEntity<List<WorkshopDto>> getAllWorkshops() {
+        return ResponseEntity.ok(workshopService.getAll("sr", "cyrl"));
     }
     
     @PostMapping("/workshops")
-    public ResponseEntity<?> createWorkshop(@Valid @RequestBody Object dto) {
-        // TODO: Implement workshop creation
-        return ResponseEntity.ok().build();
+    public ResponseEntity<WorkshopDto> createWorkshop(@Valid @RequestBody WorkshopCreateUpdateDto dto) {
+        return ResponseEntity.ok(workshopService.create(dto));
     }
     
     @PutMapping("/workshops/{id}")
-    public ResponseEntity<?> updateWorkshop(@PathVariable String id, @Valid @RequestBody Object dto) {
-        // TODO: Implement workshop update
-        return ResponseEntity.ok().build();
+    public ResponseEntity<WorkshopDto> updateWorkshop(@PathVariable String id, @Valid @RequestBody WorkshopCreateUpdateDto dto) {
+        return ResponseEntity.ok(workshopService.update(id, dto));
     }
     
     @DeleteMapping("/workshops/{id}")
     public ResponseEntity<Void> deleteWorkshop(@PathVariable String id) {
-        // TODO: Implement workshop deletion
+        workshopService.delete(id);
         return ResponseEntity.ok().build();
     }
     

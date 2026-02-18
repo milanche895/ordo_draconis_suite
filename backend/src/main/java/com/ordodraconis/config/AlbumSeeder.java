@@ -36,7 +36,7 @@ public class AlbumSeeder implements CommandLineRunner {
             albumRepository.save(album1);
             
             Album album2 = createAlbum(
-                    "Раднице за децу",
+                    "Радионице за децу",
                     "Како деца уче средњовековне занате",
                     LocalDateTime.now().minusMonths(1)
             );

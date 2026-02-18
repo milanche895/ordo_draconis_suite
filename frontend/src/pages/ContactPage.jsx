@@ -71,16 +71,24 @@ function ContactPage() {
               {locale === 'en' ? 'Contact Information' : 'Контакт информације'}
             </Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
-              <strong>{locale === 'en' ? 'Email:' : 'Емаил:'}</strong> info@ordodraconis.com
+              <strong>{locale === 'en' ? 'Email:' : 'Емаил:'}</strong> ordodraconisgracanica@gmail.com
             </Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
-              <strong>{locale === 'en' ? 'Phone:' : 'Телефон:'}</strong> +387 XX XXX XXX
+              <strong>{locale === 'en' ? 'Phone:' : 'Телефон:'}</strong> +383 49 440 976
             </Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
-              <strong>{locale === 'en' ? 'Address:' : 'Адреса:'}</strong> Грачаница, Босна и Херцеговина
+              <strong>{locale === 'en' ? 'Phone:' : 'Телефон:'}</strong> +381 66 800 5522
+            </Typography>
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              <strong>{locale === 'en' ? 'Address:' : 'Адреса:'}</strong> Грачаница            </Typography>
+            <Typography variant="body1">
+              <strong>{locale === 'en' ? 'Working Hours:' : 'Радно време:'}</strong> 08:00 - 00:00
+            </Typography>
+                        <Typography variant="body1">
+              <strong>{locale === 'en' ? 'Working Hours museum:' : 'Радно време музеја:'}</strong> 10:00 - 18:00
             </Typography>
             <Typography variant="body1">
-              <strong>{locale === 'en' ? 'Working Hours:' : 'Радно време:'}</strong> 09:00 - 18:00
+              <strong>{locale === 'en' ? '*For visiting museum reservation is required' : '* За посету музеја обавезна резервација'}</strong>
             </Typography>
           </Grid>
           

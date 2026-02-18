@@ -29,7 +29,7 @@ function Footer() {
               Средњовековни тематски парк
             </Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>
-              Грачаница, Босна и Херцеговина
+              Грачаница
             </Typography>
           </Grid>
           
@@ -38,13 +38,19 @@ function Footer() {
               {t('nav.contact')}
             </Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>
-              Email: info@ordodraconis.com
+              Email: ordodraconisgracanica@gmail.com
             </Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>
-              Телефон: +387 XX XXX XXX
+              Телефон: +383 49 440 976
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 1 }}>
+              Телефон: +381 66 800 5522
             </Typography>
             <Typography variant="body2">
-              Радно време: 09:00 - 18:00
+              Радно време: 08:00 - 00:00
+            </Typography>
+            <Typography variant="body2">
+              Радно време музеја: 10:00 - 18:00
             </Typography>
           </Grid>
           
@@ -53,10 +59,10 @@ function Footer() {
               Пратите нас
             </Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <Link href="#" color="inherit" sx={{ textDecoration: 'none' }}>
+              <Link href="https://www.facebook.com/ordodraconisgracanica" color="inherit" sx={{ textDecoration: 'none' }}>
                 Facebook
               </Link>
-              <Link href="#" color="inherit" sx={{ textDecoration: 'none' }}>
+              <Link href="https://www.instagram.com/ordo_draconis_gr/?hl=en" color="inherit" sx={{ textDecoration: 'none' }}>
                 Instagram
               </Link>
             </Box>

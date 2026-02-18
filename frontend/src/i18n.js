@@ -8,7 +8,7 @@ const resources = {
         home: 'Почетна',
         festival: 'Штит фестивал',
         museum: 'Музеј',
-        workshops: 'Раднице',
+        workshops: 'Радионице',
         gallery: 'Галерија',
         news: 'Вести',
         shop: 'Продавница',
