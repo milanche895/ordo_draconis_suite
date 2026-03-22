@@ -14,6 +14,7 @@ const resources = {
         shop: 'Продавница',
         contact: 'Контакт',
         admin: 'Админ',
+        adminPanel: 'Админ панел',
       },
       home: {
         heroTitle: 'Добродошли у Ордо Драконис',
@@ -47,6 +48,7 @@ const resources = {
         shop: 'Prodavnica',
         contact: 'Kontakt',
         admin: 'Admin',
+        adminPanel: 'Admin panel',
       },
       home: {
         heroTitle: 'Dobrodošli u Ordo Draconis',
@@ -80,6 +82,7 @@ const resources = {
         shop: 'Shop',
         contact: 'Contact',
         admin: 'Admin',
+        adminPanel: 'Admin Panel',
       },
       home: {
         heroTitle: 'Welcome to Ordo Draconis',

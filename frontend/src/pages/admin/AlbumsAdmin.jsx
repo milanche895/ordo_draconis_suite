@@ -8,8 +8,6 @@ import {
   TextField,
   Typography,
   Grid,
-  Switch,
-  FormControlLabel,
 } from '@mui/material'
 import api from '../../api/axios'
 import ImageUpload from '../../components/admin/ImageUpload'
@@ -20,7 +18,6 @@ function AlbumsAdmin() {
     titleSrCyrl: '',
     descriptionSrCyrl: '',
     images: [],
-    generateEn: false,
   })
   const [editingId, setEditingId] = useState(null)
   
@@ -39,7 +36,6 @@ function AlbumsAdmin() {
       setFormData({
         titleSrCyrl: '',
         descriptionSrCyrl: '',
-        generateEn: false,
       })
     },
   })
@@ -52,7 +48,6 @@ function AlbumsAdmin() {
       setFormData({
         titleSrCyrl: '',
         descriptionSrCyrl: '',
-        generateEn: false,
       })
     },
   })
@@ -111,16 +106,6 @@ function AlbumsAdmin() {
                   onChange={(urls) => setFormData({ ...formData, images: urls })}
                   sx={{ mb: 2 }}
                 />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={formData.generateEn}
-                      onChange={(e) => setFormData({ ...formData, generateEn: e.target.checked })}
-                    />
-                  }
-                  label="Generate English Translation"
-                  sx={{ mb: 2 }}
-                />
                 <Button type="submit" variant="contained" fullWidth>
                   {editingId ? 'Update' : 'Create'}
                 </Button>
@@ -134,7 +119,6 @@ function AlbumsAdmin() {
                       setFormData({
                         titleSrCyrl: '',
                         descriptionSrCyrl: '',
-                        generateEn: false,
                       })
                     }}
                   >
@@ -170,7 +154,6 @@ function AlbumsAdmin() {
                           setFormData({
                             titleSrCyrl: item.title || '',
                             descriptionSrCyrl: item.description || '',
-                            generateEn: false,
                           })
                         }}
                       >

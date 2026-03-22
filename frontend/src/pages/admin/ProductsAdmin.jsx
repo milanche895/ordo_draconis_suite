@@ -20,10 +20,9 @@ function ProductsAdmin() {
     nameSrCyrl: '',
     descriptionSrCyrl: '',
     price: '',
-    currency: 'RSD',
+    currency: 'EUR',
     images: [],
     active: true,
-    generateEn: false,
   })
   const [editingId, setEditingId] = useState(null)
   
@@ -43,10 +42,9 @@ function ProductsAdmin() {
         nameSrCyrl: '',
         descriptionSrCyrl: '',
         price: '',
-        currency: 'RSD',
+        currency: 'EUR',
         images: [],
         active: true,
-        generateEn: false,
       })
     },
   })
@@ -60,10 +58,9 @@ function ProductsAdmin() {
         nameSrCyrl: '',
         descriptionSrCyrl: '',
         price: '',
-        currency: 'RSD',
+        currency: 'EUR',
         images: [],
         active: true,
-        generateEn: false,
       })
     },
   })
@@ -134,26 +131,6 @@ function ProductsAdmin() {
                   required
                   sx={{ mb: 2 }}
                 />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={formData.active}
-                      onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
-                    />
-                  }
-                  label="Active"
-                  sx={{ mb: 2 }}
-                />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={formData.generateEn}
-                      onChange={(e) => setFormData({ ...formData, generateEn: e.target.checked })}
-                    />
-                  }
-                  label="Generate English Translation"
-                  sx={{ mb: 2 }}
-                />
                 <Button type="submit" variant="contained" fullWidth>
                   {editingId ? 'Update' : 'Create'}
                 </Button>
@@ -168,9 +145,8 @@ function ProductsAdmin() {
                         nameSrCyrl: '',
                         descriptionSrCyrl: '',
                         price: '',
-                        currency: 'RSD',
+                        currency: 'EUR',
                         active: true,
-                        generateEn: false,
                       })
                     }}
                   >
@@ -208,9 +184,8 @@ function ProductsAdmin() {
                             nameSrCyrl: item.name || '',
                             descriptionSrCyrl: item.description || '',
                             price: item.price?.toString() || '',
-                            currency: item.currency || 'RSD',
+                            currency: item.currency || 'EUR',
                             active: item.active !== undefined ? item.active : true,
-                            generateEn: false,
                           })
                         }}
                       >

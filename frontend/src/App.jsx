@@ -21,6 +21,9 @@ function App() {
   
   useEffect(() => {
     const path = window.location.pathname
+    if (path.startsWith('/admin')) {
+      return
+    }
     if (path.startsWith('/sr-latn')) {
       i18n.changeLanguage('sr-latn')
     } else if (path.startsWith('/en')) {

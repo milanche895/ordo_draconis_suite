@@ -49,7 +49,7 @@ function ShopPage() {
                     </Typography>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <Typography variant="h6" color="primary">
-                        {product.price} {product.currency}
+                        {product.price} {product.currency || 'EUR'}
                       </Typography>
                       <Button
                         variant="contained"

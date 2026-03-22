@@ -78,7 +78,7 @@ function ShopDetailPage() {
               {product.name}
             </Typography>
             <Typography variant="h5" color="primary" sx={{ mb: 3 }}>
-              {product.price} {product.currency}
+              {product.price} {product.currency || 'EUR'}
             </Typography>
             <Typography variant="body1" sx={{ mb: 4, whiteSpace: 'pre-line' }}>
               {product.description}

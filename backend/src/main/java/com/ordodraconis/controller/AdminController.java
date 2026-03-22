@@ -8,6 +8,7 @@ import com.ordodraconis.service.FestivalService;
 import com.ordodraconis.service.MuseumItemService;
 import com.ordodraconis.service.NewsService;
 import com.ordodraconis.service.ProductService;
+import com.ordodraconis.service.PageIntroService;
 import com.ordodraconis.service.WorkshopService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +29,13 @@ public class AdminController {
     private final MuseumItemService museumItemService;
     private final FestivalService festivalService;
     private final WorkshopService workshopService;
+    private final PageIntroService pageIntroService;
 
     public AdminController(NewsService newsService, ProductService productService,
                           AlbumService albumService, MediaService mediaService,
                           MuseumItemService museumItemService, FestivalService festivalService,
-                          WorkshopService workshopService) {
+                          WorkshopService workshopService,
+                          PageIntroService pageIntroService) {
         this.newsService = newsService;
         this.productService = productService;
         this.albumService = albumService;
@@ -40,6 +43,7 @@ public class AdminController {
         this.museumItemService = museumItemService;
         this.festivalService = festivalService;
         this.workshopService = workshopService;
+        this.pageIntroService = pageIntroService;
     }
     
     // News CRUD
@@ -145,6 +149,16 @@ public class AdminController {
     public ResponseEntity<Void> deleteWorkshop(@PathVariable String id) {
         workshopService.delete(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/page-intros/workshops")
+    public ResponseEntity<LocalizedStringsDto> getWorkshopsPageIntro() {
+        return ResponseEntity.ok(pageIntroService.getWorkshopsIntroForAdmin());
+    }
+
+    @PutMapping("/page-intros/workshops")
+    public ResponseEntity<LocalizedStringsDto> updateWorkshopsPageIntro(@RequestBody LocalizedStringsDto dto) {
+        return ResponseEntity.ok(pageIntroService.updateWorkshopsIntro(dto));
     }
     
     // Museum Item CRUD

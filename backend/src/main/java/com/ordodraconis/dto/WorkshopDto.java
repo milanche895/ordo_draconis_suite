@@ -9,6 +9,10 @@ public class WorkshopDto {
     private String title;
     private String description;
     private String content;
+    /** All locales for admin forms; public clients may ignore. */
+    private LocalizedStringsDto titleLocales;
+    private LocalizedStringsDto descriptionLocales;
+    private LocalizedStringsDto contentLocales;
     private String slug;
     private String coverImage;
     private List<String> galleryImages;
@@ -35,6 +39,12 @@ public class WorkshopDto {
     public void setDescription(String description) { this.description = description; }
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
+    public LocalizedStringsDto getTitleLocales() { return titleLocales; }
+    public void setTitleLocales(LocalizedStringsDto titleLocales) { this.titleLocales = titleLocales; }
+    public LocalizedStringsDto getDescriptionLocales() { return descriptionLocales; }
+    public void setDescriptionLocales(LocalizedStringsDto descriptionLocales) { this.descriptionLocales = descriptionLocales; }
+    public LocalizedStringsDto getContentLocales() { return contentLocales; }
+    public void setContentLocales(LocalizedStringsDto contentLocales) { this.contentLocales = contentLocales; }
     public String getSlug() { return slug; }
     public void setSlug(String slug) { this.slug = slug; }
     public String getCoverImage() { return coverImage; }
@@ -62,6 +72,9 @@ public class WorkshopDto {
         public Builder title(String title) { dto.setTitle(title); return this; }
         public Builder description(String description) { dto.setDescription(description); return this; }
         public Builder content(String content) { dto.setContent(content); return this; }
+        public Builder titleLocales(LocalizedStringsDto v) { dto.setTitleLocales(v); return this; }
+        public Builder descriptionLocales(LocalizedStringsDto v) { dto.setDescriptionLocales(v); return this; }
+        public Builder contentLocales(LocalizedStringsDto v) { dto.setContentLocales(v); return this; }
         public Builder slug(String slug) { dto.setSlug(slug); return this; }
         public Builder coverImage(String coverImage) { dto.setCoverImage(coverImage); return this; }
         public Builder galleryImages(List<String> galleryImages) { dto.setGalleryImages(galleryImages); return this; }

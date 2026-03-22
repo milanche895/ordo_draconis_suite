@@ -34,8 +34,8 @@ public class ProductSeeder implements CommandLineRunner {
                     "Средњовековни мач - реплика",
                     "Прецизна реплика средњовековног мача са детаљним украсима",
                     "srednjevekovni-mac-replika",
-                    new BigDecimal("15000"),
-                    "RSD"
+                    new BigDecimal("130"),
+                    "EUR"
             );
             productRepository.save(p1);
             
@@ -44,8 +44,8 @@ public class ProductSeeder implements CommandLineRunner {
                     "Штит са грбом",
                     "Декоративни штит са средњовековним грбом Ордо Драконис",
                     "stit-sa-grbom",
-                    new BigDecimal("8000"),
-                    "RSD"
+                    new BigDecimal("70"),
+                    "EUR"
             );
             productRepository.save(p2);
             
@@ -54,8 +54,8 @@ public class ProductSeeder implements CommandLineRunner {
                     "Књига средњовековних прича",
                     "Збирка прича и легенди из средњег века",
                     "knjiga-srednjevekovnih-prica",
-                    new BigDecimal("2500"),
-                    "RSD"
+                    new BigDecimal("22"),
+                    "EUR"
             );
             productRepository.save(p3);
             }

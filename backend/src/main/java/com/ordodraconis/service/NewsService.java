@@ -7,7 +7,9 @@ import com.ordodraconis.model.News;
 import com.ordodraconis.repository.NewsRepository;
 import com.ordodraconis.util.SlugUtil;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +34,12 @@ public class NewsService {
     }
     
     public Page<NewsDto> getPublishedNews(Pageable pageable, String lang, String script) {
-        return newsRepository.findByStatus("PUBLISHED", pageable)
+        Pageable sorted = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Order.desc("publishedAt"), Sort.Order.desc("createdAt"))
+        );
+        return newsRepository.findAll(sorted)
                 .map(n -> toDto(n, lang, script));
     }
     
@@ -52,10 +59,7 @@ public class NewsService {
         updateNewsFromDto(news, dto);
         news.setCreatedAt(LocalDateTime.now());
         news.setUpdatedAt(LocalDateTime.now());
-        
-        if ("PUBLISHED".equals(dto.getStatus())) {
-            news.setPublishedAt(LocalDateTime.now());
-        }
+        news.setPublishedAt(LocalDateTime.now());
         
         news = newsRepository.save(news);
         return toDto(news, "sr", "cyrl");
@@ -68,7 +72,7 @@ public class NewsService {
         updateNewsFromDto(news, dto);
         news.setUpdatedAt(LocalDateTime.now());
         
-        if ("PUBLISHED".equals(dto.getStatus()) && news.getPublishedAt() == null) {
+        if (news.getPublishedAt() == null) {
             news.setPublishedAt(LocalDateTime.now());
         }
         
@@ -88,14 +92,13 @@ public class NewsService {
         title.setSrLatn(dto.getTitleSrLatn() != null ? dto.getTitleSrLatn() : 
                 transliterationService.transliterate(dto.getTitleSrCyrl()));
         
-        if (dto.getGenerateEn() || "PUBLISHED".equals(dto.getStatus())) {
-            if (dto.getTitleEn() != null && !dto.getTitleEn().isEmpty()) {
-                title.setEn(dto.getTitleEn());
-            } else if (title.getEn() == null || title.getEn().isEmpty()) {
-                title.setEn(translationService.translate(dto.getTitleSrCyrl(), "sr", "en"));
-            }
-        } else if (dto.getTitleEn() != null) {
+        if (dto.getTitleEn() != null && !dto.getTitleEn().isEmpty()) {
             title.setEn(dto.getTitleEn());
+        } else if (news.getTitle() != null && news.getTitle().getEn() != null
+                && !news.getTitle().getEn().isBlank()) {
+            title.setEn(news.getTitle().getEn());
+        } else {
+            title.setEn(translationService.translate(dto.getTitleSrCyrl(), "sr", "en"));
         }
         news.setTitle(title);
         
@@ -105,14 +108,13 @@ public class NewsService {
         summary.setSrLatn(dto.getSummarySrLatn() != null ? dto.getSummarySrLatn() : 
                 transliterationService.transliterate(dto.getSummarySrCyrl()));
         
-        if (dto.getGenerateEn() || "PUBLISHED".equals(dto.getStatus())) {
-            if (dto.getSummaryEn() != null && !dto.getSummaryEn().isEmpty()) {
-                summary.setEn(dto.getSummaryEn());
-            } else if (summary.getEn() == null || summary.getEn().isEmpty()) {
-                summary.setEn(translationService.translate(dto.getSummarySrCyrl(), "sr", "en"));
-            }
-        } else if (dto.getSummaryEn() != null) {
+        if (dto.getSummaryEn() != null && !dto.getSummaryEn().isEmpty()) {
             summary.setEn(dto.getSummaryEn());
+        } else if (news.getSummary() != null && news.getSummary().getEn() != null
+                && !news.getSummary().getEn().isBlank()) {
+            summary.setEn(news.getSummary().getEn());
+        } else {
+            summary.setEn(translationService.translate(dto.getSummarySrCyrl(), "sr", "en"));
         }
         news.setSummary(summary);
         
@@ -122,14 +124,13 @@ public class NewsService {
         content.setSrLatn(dto.getContentSrLatn() != null ? dto.getContentSrLatn() : 
                 transliterationService.transliterate(dto.getContentSrCyrl()));
         
-        if (dto.getGenerateEn() || "PUBLISHED".equals(dto.getStatus())) {
-            if (dto.getContentEn() != null && !dto.getContentEn().isEmpty()) {
-                content.setEn(dto.getContentEn());
-            } else if (content.getEn() == null || content.getEn().isEmpty()) {
-                content.setEn(translationService.translate(dto.getContentSrCyrl(), "sr", "en"));
-            }
-        } else if (dto.getContentEn() != null) {
+        if (dto.getContentEn() != null && !dto.getContentEn().isEmpty()) {
             content.setEn(dto.getContentEn());
+        } else if (news.getContent() != null && news.getContent().getEn() != null
+                && !news.getContent().getEn().isBlank()) {
+            content.setEn(news.getContent().getEn());
+        } else {
+            content.setEn(translationService.translate(dto.getContentSrCyrl(), "sr", "en"));
         }
         news.setContent(content);
         
@@ -140,7 +141,6 @@ public class NewsService {
         
         news.setCoverImage(dto.getCoverImage());
         news.setGalleryImages(dto.getGalleryImages() != null ? dto.getGalleryImages() : news.getGalleryImages());
-        news.setStatus(dto.getStatus() != null ? dto.getStatus() : "DRAFT");
     }
     
     public NewsDto toDto(News news, String lang, String script) {
@@ -156,7 +156,6 @@ public class NewsService {
                 .slug(news.getSlug())
                 .coverImage(news.getCoverImage())
                 .galleryImages(news.getGalleryImages())
-                .status(news.getStatus())
                 .publishedAt(news.getPublishedAt())
                 .createdAt(news.getCreatedAt())
                 .updatedAt(news.getUpdatedAt())

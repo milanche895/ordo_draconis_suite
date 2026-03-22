@@ -12,7 +12,6 @@ public class NewsDto {
     private String slug;
     private String coverImage;
     private List<String> galleryImages = new ArrayList<>();
-    private String status;
     private LocalDateTime publishedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -21,7 +20,7 @@ public class NewsDto {
     }
     
     public NewsDto(String id, String title, String summary, String content, String slug, 
-                   String coverImage, List<String> galleryImages, String status,
+                   String coverImage, List<String> galleryImages,
                    LocalDateTime publishedAt, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
@@ -30,7 +29,6 @@ public class NewsDto {
         this.slug = slug;
         this.coverImage = coverImage;
         this.galleryImages = galleryImages != null ? galleryImages : new ArrayList<>();
-        this.status = status;
         this.publishedAt = publishedAt;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -97,14 +95,6 @@ public class NewsDto {
         this.galleryImages = galleryImages != null ? galleryImages : new ArrayList<>();
     }
     
-    public String getStatus() {
-        return status;
-    }
-    
-    public void setStatus(String status) {
-        this.status = status;
-    }
-    
     public LocalDateTime getPublishedAt() {
         return publishedAt;
     }
@@ -137,7 +127,6 @@ public class NewsDto {
         private String slug;
         private String coverImage;
         private List<String> galleryImages = new ArrayList<>();
-        private String status;
         private LocalDateTime publishedAt;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
@@ -177,11 +166,6 @@ public class NewsDto {
             return this;
         }
         
-        public Builder status(String status) {
-            this.status = status;
-            return this;
-        }
-        
         public Builder publishedAt(LocalDateTime publishedAt) {
             this.publishedAt = publishedAt;
             return this;
@@ -199,7 +183,7 @@ public class NewsDto {
         
         public NewsDto build() {
             return new NewsDto(id, title, summary, content, slug, coverImage, galleryImages, 
-                             status, publishedAt, createdAt, updatedAt);
+                             publishedAt, createdAt, updatedAt);
         }
     }
 }

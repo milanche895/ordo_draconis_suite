@@ -102,7 +102,8 @@ public class ProductService {
         }
         
         product.setPrice(dto.getPrice());
-        product.setCurrency(dto.getCurrency());
+        String currency = dto.getCurrency();
+        product.setCurrency(currency != null && !currency.isBlank() ? currency : "EUR");
         product.setImages(dto.getImages() != null ? dto.getImages() : product.getImages());
         product.setActive(dto.isActive());
         product.setStock(dto.getStock());

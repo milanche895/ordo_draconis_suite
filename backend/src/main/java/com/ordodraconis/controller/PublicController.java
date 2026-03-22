@@ -6,8 +6,10 @@ import com.ordodraconis.dto.FestivalDto;
 import com.ordodraconis.dto.MuseumItemDto;
 import com.ordodraconis.dto.NewsDto;
 import com.ordodraconis.dto.ProductDto;
+import com.ordodraconis.dto.PageIntroTextDto;
 import com.ordodraconis.dto.WorkshopDto;
 import com.ordodraconis.service.AlbumService;
+import com.ordodraconis.service.PageIntroService;
 import com.ordodraconis.service.FestivalService;
 import com.ordodraconis.service.MuseumItemService;
 import com.ordodraconis.service.NewsService;
@@ -36,11 +38,13 @@ public class PublicController {
     private final MuseumItemService museumItemService;
     private final FestivalService festivalService;
     private final WorkshopService workshopService;
+    private final PageIntroService pageIntroService;
     private final MongoTemplate mongoTemplate;
 
     public PublicController(NewsService newsService, ProductService productService,
                              AlbumService albumService, MuseumItemService museumItemService,
                              FestivalService festivalService, WorkshopService workshopService,
+                             PageIntroService pageIntroService,
                              MongoTemplate mongoTemplate) {
         this.newsService = newsService;
         this.productService = productService;
@@ -48,6 +52,7 @@ public class PublicController {
         this.museumItemService = museumItemService;
         this.festivalService = festivalService;
         this.workshopService = workshopService;
+        this.pageIntroService = pageIntroService;
         this.mongoTemplate = mongoTemplate;
     }
     
@@ -145,6 +150,14 @@ public class PublicController {
             @RequestParam(defaultValue = "cyrl") String script
     ) {
         return ResponseEntity.ok(workshopService.getActive(lang, script));
+    }
+
+    @GetMapping("/page-intros/workshops")
+    public ResponseEntity<PageIntroTextDto> getWorkshopsPageIntro(
+            @RequestParam(defaultValue = "sr") String lang,
+            @RequestParam(defaultValue = "cyrl") String script
+    ) {
+        return ResponseEntity.ok(pageIntroService.getWorkshopsIntro(lang, script));
     }
 
     /** Provera konekcije: otvori http://localhost:8080/api/public/mongo-info i uporedi "database" sa bazom u Atlasu */

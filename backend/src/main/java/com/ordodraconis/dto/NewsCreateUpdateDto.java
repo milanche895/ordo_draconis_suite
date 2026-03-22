@@ -23,7 +23,6 @@ public class NewsCreateUpdateDto {
     
     private String coverImage;
     private List<String> galleryImages = new ArrayList<>();
-    private String status; // DRAFT, PUBLISHED
     private Boolean generateEn = false; // Trigger EN translation
     
     // Getters and Setters
@@ -113,14 +112,6 @@ public class NewsCreateUpdateDto {
     
     public void setGalleryImages(List<String> galleryImages) {
         this.galleryImages = galleryImages != null ? galleryImages : new ArrayList<>();
-    }
-    
-    public String getStatus() {
-        return status;
-    }
-    
-    public void setStatus(String status) {
-        this.status = status;
     }
     
     public Boolean getGenerateEn() {

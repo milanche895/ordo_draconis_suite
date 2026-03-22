@@ -23,8 +23,6 @@ public class News {
     private String coverImage;
     private List<String> galleryImages = new ArrayList<>();
     
-    private String status; // DRAFT, PUBLISHED
-    
     private LocalDateTime publishedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -34,7 +32,7 @@ public class News {
     
     public News(String id, MultiLanguageContent title, MultiLanguageContent summary, 
                 MultiLanguageContent content, String slug, String coverImage, 
-                List<String> galleryImages, String status, LocalDateTime publishedAt, 
+                List<String> galleryImages, LocalDateTime publishedAt, 
                 LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
@@ -43,7 +41,6 @@ public class News {
         this.slug = slug;
         this.coverImage = coverImage;
         this.galleryImages = galleryImages != null ? galleryImages : new ArrayList<>();
-        this.status = status;
         this.publishedAt = publishedAt;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -110,14 +107,6 @@ public class News {
         this.galleryImages = galleryImages != null ? galleryImages : new ArrayList<>();
     }
     
-    public String getStatus() {
-        return status;
-    }
-    
-    public void setStatus(String status) {
-        this.status = status;
-    }
-    
     public LocalDateTime getPublishedAt() {
         return publishedAt;
     }
@@ -150,7 +139,6 @@ public class News {
         private String slug;
         private String coverImage;
         private List<String> galleryImages = new ArrayList<>();
-        private String status;
         private LocalDateTime publishedAt;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
@@ -190,11 +178,6 @@ public class News {
             return this;
         }
         
-        public Builder status(String status) {
-            this.status = status;
-            return this;
-        }
-        
         public Builder publishedAt(LocalDateTime publishedAt) {
             this.publishedAt = publishedAt;
             return this;
@@ -212,7 +195,7 @@ public class News {
         
         public News build() {
             return new News(id, title, summary, content, slug, coverImage, 
-                          galleryImages, status, publishedAt, createdAt, updatedAt);
+                          galleryImages, publishedAt, createdAt, updatedAt);
         }
     }
 }

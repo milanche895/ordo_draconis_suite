@@ -168,9 +168,15 @@ function HomePage() {
                     {news.coverImage && (
                       <CardMedia
                         component="img"
-                        height="200"
                         image={news.coverImage}
                         alt={news.title}
+                        sx={{
+                          height: 200,
+                          width: '100%',
+                          objectFit: 'cover',
+                          objectPosition: 'center',
+                          display: 'block',
+                        }}
                       />
                     )}
                     <CardContent>

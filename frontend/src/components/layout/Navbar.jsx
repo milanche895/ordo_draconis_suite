@@ -40,6 +40,7 @@ function Navbar() {
   
   const { locale } = getLanguageFromPath(location.pathname)
   const prefix = getPathPrefix(locale)
+  const isAdmin = Boolean(localStorage.getItem('accessToken'))
   
   const handleLanguageChange = (newLocale) => {
     const currentPath = location.pathname
@@ -54,7 +55,7 @@ function Navbar() {
   
   const navItems = [
     { key: 'home', path: prefix },
-    { key: 'festival', path: festivalPath, highlight: true },
+    { key: 'festival', path: festivalPath },
     { key: 'museum', path: `${prefix}/${locale === 'en' ? 'museum' : 'muzej'}` },
     { key: 'workshops', path: `${prefix}/${locale === 'en' ? 'workshops' : 'radionice'}` },
     { key: 'gallery', path: `${prefix}/${locale === 'en' ? 'gallery' : 'galerija'}` },
@@ -101,22 +102,34 @@ function Navbar() {
               </Button>
             ))}
             
-            <Button
-              color="inherit"
-              onClick={(e) => setAnchorEl(e.currentTarget)}
-              sx={{ minWidth: 'auto', px: 1 }}
-            >
-              {locale === 'sr' ? 'SR (Ћир)' : locale === 'sr-latn' ? 'SR (Lat)' : 'EN'}
-            </Button>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={() => setAnchorEl(null)}
-            >
-              <MenuItem onClick={() => handleLanguageChange('sr')}>SR (Ћир)</MenuItem>
-              <MenuItem onClick={() => handleLanguageChange('sr-latn')}>SR (Lat)</MenuItem>
-              <MenuItem onClick={() => handleLanguageChange('en')}>EN</MenuItem>
-            </Menu>
+            {isAdmin ? (
+              <Button
+                color="inherit"
+                onClick={() => navigate('/admin')}
+                sx={{ minWidth: 'auto', px: 1, fontWeight: 600, color: '#D4AF37' }}
+              >
+                {t('nav.adminPanel')}
+              </Button>
+            ) : (
+              <>
+                <Button
+                  color="inherit"
+                  onClick={(e) => setAnchorEl(e.currentTarget)}
+                  sx={{ minWidth: 'auto', px: 1 }}
+                >
+                  {locale === 'sr' ? 'SR (Ћир)' : locale === 'sr-latn' ? 'SR (Lat)' : 'EN'}
+                </Button>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={() => setAnchorEl(null)}
+                >
+                  <MenuItem onClick={() => handleLanguageChange('sr')}>SR (Ћир)</MenuItem>
+                  <MenuItem onClick={() => handleLanguageChange('sr-latn')}>SR (Lat)</MenuItem>
+                  <MenuItem onClick={() => handleLanguageChange('en')}>EN</MenuItem>
+                </Menu>
+              </>
+            )}
           </Box>
           
           <IconButton
@@ -152,14 +165,28 @@ function Navbar() {
               </Button>
             ))}
             <Box sx={{ px: 3, pt: 1 }}>
-              <Button
-                color="inherit"
-                onClick={(e) => setAnchorEl(e.currentTarget)}
-                fullWidth
-                sx={{ justifyContent: 'flex-start' }}
-              >
-                {locale === 'sr' ? 'SR (Ћир)' : locale === 'sr-latn' ? 'SR (Lat)' : 'EN'}
-              </Button>
+              {isAdmin ? (
+                <Button
+                  color="inherit"
+                  fullWidth
+                  sx={{ justifyContent: 'flex-start', fontWeight: 600, color: '#D4AF37' }}
+                  onClick={() => {
+                    navigate('/admin')
+                    setMobileMenuOpen(false)
+                  }}
+                >
+                  {t('nav.adminPanel')}
+                </Button>
+              ) : (
+                <Button
+                  color="inherit"
+                  onClick={(e) => setAnchorEl(e.currentTarget)}
+                  fullWidth
+                  sx={{ justifyContent: 'flex-start' }}
+                >
+                  {locale === 'sr' ? 'SR (Ћир)' : locale === 'sr-latn' ? 'SR (Lat)' : 'EN'}
+                </Button>
+              )}
             </Box>
           </Box>
         )}

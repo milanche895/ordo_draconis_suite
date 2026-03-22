@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Box, Container, Typography, Grid, Card, CardContent, CardMedia, CircularProgress, Alert } from '@mui/material'
 import { useLocation } from 'react-router-dom'
 import { getLanguageFromPath } from '../utils/language'
-import { getWorkshops } from '../api/workshops'
+import { getWorkshops, getWorkshopsPageIntro } from '../api/workshops'
 
 function WorkshopsPage() {
   const location = useLocation()
@@ -11,6 +11,11 @@ function WorkshopsPage() {
   const { data: workshops = [], isLoading, error } = useQuery({
     queryKey: ['workshops', lang, script],
     queryFn: () => getWorkshops(lang, script),
+  })
+
+  const { data: pageIntro } = useQuery({
+    queryKey: ['workshops-page-intro', lang, script],
+    queryFn: () => getWorkshopsPageIntro(lang, script),
   })
 
   const content = {
@@ -42,9 +47,14 @@ function WorkshopsPage() {
 
   const t = content[locale] || content.sr
 
+  const introText =
+    pageIntro?.description != null && String(pageIntro.description).trim() !== ''
+      ? pageIntro.description
+      : t.description
+
   const formatPrice = (workshop) => {
     if (workshop.price == null || workshop.price === 0) return t.free
-    return `${workshop.price} ${workshop.currency || 'RSD'}`
+    return `${workshop.price} ${workshop.currency || 'EUR'}`
   }
 
   return (
@@ -54,7 +64,7 @@ function WorkshopsPage() {
           {t.title}
         </Typography>
         <Typography variant="body1" align="center" sx={{ mb: 8, maxWidth: '800px', mx: 'auto' }}>
-          {t.description}
+          {introText}
         </Typography>
 
         {error && (

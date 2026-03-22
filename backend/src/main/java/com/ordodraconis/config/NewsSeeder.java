@@ -76,7 +76,6 @@ public class NewsSeeder implements CommandLineRunner {
         news.setSummary(summary);
         news.setContent(content);
         news.setSlug(slug);
-        news.setStatus("PUBLISHED");
         news.setPublishedAt(LocalDateTime.now());
         news.setCreatedAt(LocalDateTime.now());
         news.setUpdatedAt(LocalDateTime.now());

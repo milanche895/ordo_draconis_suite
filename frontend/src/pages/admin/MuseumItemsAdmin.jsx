@@ -28,11 +28,16 @@ import {
   MenuItem,
 } from '@mui/material'
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material'
+import { useTranslation } from 'react-i18next'
 import api from '../../api/axios'
 import ImageUpload from '../../components/admin/ImageUpload'
 import { cyrlToLatn, latnToCyrl } from '../../utils/transliterate'
+import { MUSEUM_CATEGORY_OPTIONS, getMuseumCategoryLabel } from '../../utils/museumCategories'
 
 function MuseumItemsAdmin() {
+  const { i18n } = useTranslation()
+  const adminLocale =
+    i18n.language === 'en' ? 'en' : i18n.language === 'sr-latn' ? 'sr-latn' : 'sr'
   const queryClient = useQueryClient()
   const [formData, setFormData] = useState({
     titleSrCyrl: '',
@@ -185,8 +190,6 @@ function MuseumItemsAdmin() {
     deleteMutation.mutate(id)
   }
   
-  const categories = ['Оружје', 'Оклоп', 'Артефакти', 'Документи', 'Уметност', 'Остало']
-  
   return (
     <Box>
       <Typography variant="h5" sx={{ mb: 4 }}>
@@ -307,9 +310,9 @@ function MuseumItemsAdmin() {
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     label="Категорија"
                   >
-                    {categories.map((cat) => (
-                      <MenuItem key={cat} value={cat}>
-                        {cat}
+                    {MUSEUM_CATEGORY_OPTIONS.map(({ value }) => (
+                      <MenuItem key={value} value={value}>
+                        {getMuseumCategoryLabel(value, adminLocale)}
                       </MenuItem>
                     ))}
                   </Select>
@@ -327,26 +330,6 @@ function MuseumItemsAdmin() {
                   value={formData.origin}
                   onChange={(e) => setFormData({ ...formData, origin: e.target.value })}
                   sx={{ mb: 2 }}
-                />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={formData.featured}
-                      onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                    />
-                  }
-                  label="Истакнуто"
-                  sx={{ mb: 2, display: 'block' }}
-                />
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={formData.active}
-                      onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
-                    />
-                  }
-                  label="Активно"
-                  sx={{ mb: 2, display: 'block' }}
                 />
                 <Box sx={{ display: 'flex', gap: 2 }}>
                   <Button type="submit" variant="contained" color="primary">
@@ -371,7 +354,6 @@ function MuseumItemsAdmin() {
                   <TableCell>Наслов</TableCell>
                   <TableCell>Категорија</TableCell>
                   <TableCell>Период</TableCell>
-                  <TableCell>Истакнуто</TableCell>
                   <TableCell>Акције</TableCell>
                 </TableRow>
               </TableHead>
@@ -388,9 +370,12 @@ function MuseumItemsAdmin() {
                   museumItems.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell>{item.title || 'Без наслова'}</TableCell>
-                      <TableCell>{item.category || '-'}</TableCell>
+                      <TableCell>
+                        {item.category
+                          ? getMuseumCategoryLabel(item.category, adminLocale)
+                          : '-'}
+                      </TableCell>
                       <TableCell>{item.period || '-'}</TableCell>
-                      <TableCell>{item.featured ? 'Да' : 'Не'}</TableCell>
                       <TableCell>
                         <IconButton size="small" onClick={() => handleEdit(item)}>
                           <EditIcon />

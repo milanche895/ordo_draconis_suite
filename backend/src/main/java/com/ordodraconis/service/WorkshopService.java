@@ -1,5 +1,6 @@
 package com.ordodraconis.service;
 
+import com.ordodraconis.dto.LocalizedStringsDto;
 import com.ordodraconis.dto.WorkshopCreateUpdateDto;
 import com.ordodraconis.dto.WorkshopDto;
 import com.ordodraconis.model.MultiLanguageContent;
@@ -98,7 +99,7 @@ public class WorkshopService {
         workshop.setDuration(dto.getDuration());
         workshop.setMaxParticipants(dto.getMaxParticipants());
         workshop.setPrice(dto.getPrice());
-        workshop.setCurrency(dto.getCurrency() != null ? dto.getCurrency() : "RSD");
+        workshop.setCurrency(dto.getCurrency() != null && !dto.getCurrency().isBlank() ? dto.getCurrency() : "EUR");
         workshop.setActive(dto.isActive());
 
         if (workshop.getSlug() == null || workshop.getSlug().isEmpty()) {
@@ -119,6 +120,9 @@ public class WorkshopService {
                 .title(title)
                 .description(description)
                 .content(content)
+                .titleLocales(toLocales(w.getTitle()))
+                .descriptionLocales(toLocales(w.getDescription()))
+                .contentLocales(toLocales(w.getContent()))
                 .slug(w.getSlug())
                 .coverImage(w.getCoverImage())
                 .galleryImages(w.getGalleryImages())
@@ -137,5 +141,16 @@ public class WorkshopService {
         if ("en".equals(lang)) return mc.getEn() != null ? mc.getEn() : (mc.getSrCyrl() != null ? mc.getSrCyrl() : "");
         if ("sr".equals(lang) && "latn".equals(script)) return mc.getSrLatn() != null ? mc.getSrLatn() : (mc.getSrCyrl() != null ? mc.getSrCyrl() : "");
         return mc.getSrCyrl() != null ? mc.getSrCyrl() : "";
+    }
+
+    private LocalizedStringsDto toLocales(MultiLanguageContent mc) {
+        if (mc == null) {
+            return null;
+        }
+        LocalizedStringsDto d = new LocalizedStringsDto();
+        d.setSrCyrl(mc.getSrCyrl());
+        d.setSrLatn(mc.getSrLatn());
+        d.setEn(mc.getEn());
+        return d;
     }
 }
