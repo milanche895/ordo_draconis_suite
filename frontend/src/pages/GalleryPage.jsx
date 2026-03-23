@@ -3,10 +3,12 @@ import { useQuery } from '@tanstack/react-query'
 import { getAlbums } from '../api/albums'
 import { useLocation } from 'react-router-dom'
 import { getLanguageFromPath } from '../utils/language'
+import { cyrlToLatn } from '../utils/transliterate'
 
 function GalleryPage() {
   const location = useLocation()
   const { lang, script, locale } = getLanguageFromPath(location.pathname)
+  const srText = (cyr) => (locale === 'sr-latn' ? cyrlToLatn(cyr) : cyr)
   
   const { data: albums, isLoading } = useQuery({
     queryKey: ['albums', lang, script],
@@ -29,7 +31,7 @@ function GalleryPage() {
         </Typography>
         
         {isLoading ? (
-          <Typography align="center">Loading...</Typography>
+          <Typography align="center">{locale === 'en' ? 'Loading...' : srText('Učitavanje...')}</Typography>
         ) : albums && albums.length > 0 ? (
           <Grid container spacing={4}>
             {albums.map((album) => (
@@ -73,7 +75,7 @@ function GalleryPage() {
           </Grid>
         ) : (
           <Typography align="center" color="text.secondary">
-            {locale === 'en' ? 'No albums available' : 'Нема доступних албума'}
+            {locale === 'en' ? 'No albums available' : srText('Нема доступних албума')}
           </Typography>
         )}
       </Container>

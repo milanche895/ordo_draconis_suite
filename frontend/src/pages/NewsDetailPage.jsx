@@ -5,6 +5,7 @@ import { getNewsBySlug } from '../api/news'
 import { getLanguageFromPath, getPathPrefix } from '../utils/language'
 import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
+import { cyrlToLatn } from '../utils/transliterate'
 
 function NewsDetailPage() {
   const { slug } = useParams()
@@ -13,6 +14,7 @@ function NewsDetailPage() {
   const { t } = useTranslation()
   const { lang, script, locale } = getLanguageFromPath(location.pathname)
   const prefix = getPathPrefix(locale)
+  const srText = (cyr) => (locale === 'sr-latn' ? cyrlToLatn(cyr) : cyr)
   
   const { data: news, isLoading } = useQuery({
     queryKey: ['news', slug, lang, script],
@@ -23,7 +25,7 @@ function NewsDetailPage() {
     return (
       <Box sx={{ py: 8 }}>
         <Container>
-          <Typography>Loading...</Typography>
+          <Typography>{locale === 'en' ? 'Loading...' : srText('Učitavanje...')}</Typography>
         </Container>
       </Box>
     )
@@ -33,7 +35,9 @@ function NewsDetailPage() {
     return (
       <Box sx={{ py: 8 }}>
         <Container>
-          <Typography>{locale === 'en' ? 'News not found' : 'Вест није пронађена'}</Typography>
+          <Typography>
+            {locale === 'en' ? 'News not found' : srText('Вест није пронађена')}
+          </Typography>
         </Container>
       </Box>
     )
@@ -73,7 +77,7 @@ function NewsDetailPage() {
         {news.galleryImages && news.galleryImages.length > 0 && (
           <Box sx={{ mt: 6 }}>
             <Typography variant="h5" sx={{ mb: 3 }}>
-              {locale === 'en' ? 'Gallery' : 'Галерија'}
+              {locale === 'en' ? 'Gallery' : srText('Галерија')}
             </Typography>
             <Grid container spacing={2}>
               {news.galleryImages.map((image, idx) => (

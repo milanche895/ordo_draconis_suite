@@ -12,7 +12,7 @@ import {
   IconButton,
   useScrollTrigger,
 } from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu'
+import { Menu as MenuIcon } from '@mui/icons-material'
 import { getLanguageFromPath, getPathPrefix } from '../../utils/language'
 
 function ElevationScroll({ children }) {
@@ -43,8 +43,18 @@ function Navbar() {
   
   const handleLanguageChange = (newLocale) => {
     const currentPath = location.pathname
-    const pathWithoutPrefix = currentPath.replace(/^\/(sr|sr-latn|en)/, '') || '/'
-    const newPath = getPathPrefix(newLocale) + pathWithoutPrefix
+    // Ukloni postojeći jezički prefix iz URL-a (npr. /sr/..., /sr-latn/...),
+    // i ne dozvoli da se dodatno "lepi" -latn na postojeći segment.
+    const segments = currentPath.split('/').filter(Boolean)
+    const firstSegment = segments[0]
+
+    const hasValidLocalePrefix =
+      firstSegment === 'sr' ||
+      firstSegment === 'en' ||
+      (typeof firstSegment === 'string' && firstSegment.startsWith('sr-latn'))
+
+    const restSegments = hasValidLocalePrefix ? segments.slice(1) : segments
+    const newPath = getPathPrefix(newLocale) + (restSegments.length ? `/${restSegments.join('/')}` : '')
     i18n.changeLanguage(newLocale)
     navigate(newPath)
     setAnchorEl(null)
