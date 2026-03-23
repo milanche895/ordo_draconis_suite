@@ -5,6 +5,7 @@ import { getNews } from '../api/news'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { getLanguageFromPath, getPathPrefix } from '../utils/language'
 import { useTranslation } from 'react-i18next'
+import { cyrlToLatn } from '../utils/transliterate'
 
 function NewsPage() {
   const navigate = useNavigate()
@@ -12,6 +13,7 @@ function NewsPage() {
   const { t } = useTranslation()
   const { lang, script, locale } = getLanguageFromPath(location.pathname)
   const prefix = getPathPrefix(locale)
+  const srText = (cyr) => (locale === 'sr-latn' ? cyrlToLatn(cyr) : cyr)
   const [page, setPage] = useState(0)
   
   const { data: newsData, isLoading } = useQuery({
@@ -23,11 +25,11 @@ function NewsPage() {
     <Box sx={{ py: 8 }}>
       <Container>
         <Typography variant="h2" align="center" sx={{ mb: 8 }}>
-          {locale === 'en' ? 'News' : 'Вести'}
+          {locale === 'en' ? 'News' : srText('Вести')}
         </Typography>
         
         {isLoading ? (
-          <Typography align="center">Loading...</Typography>
+          <Typography align="center">{locale === 'en' ? 'Loading...' : srText('Учитавање...')}</Typography>
         ) : newsData && newsData.content && newsData.content.length > 0 ? (
           <>
             <Grid container spacing={4}>
@@ -86,7 +88,7 @@ function NewsPage() {
           </>
         ) : (
           <Typography align="center" color="text.secondary">
-            {locale === 'en' ? 'No news available' : 'Нема доступних вести'}
+            {locale === 'en' ? 'No news available' : srText('Нема доступних вести')}
           </Typography>
         )}
       </Container>

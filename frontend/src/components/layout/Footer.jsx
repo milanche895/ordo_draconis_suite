@@ -2,12 +2,14 @@ import { Box, Container, Typography, Grid, Link } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 import { getPathPrefix, getLanguageFromPath } from '../../utils/language'
+import { cyrlToLatn } from '../../utils/transliterate'
 
 function Footer() {
   const { t, i18n } = useTranslation()
   const location = useLocation()
   const { locale } = getLanguageFromPath(location.pathname)
   const prefix = getPathPrefix(locale)
+  const srText = (cyr) => (locale === 'sr-latn' ? cyrlToLatn(cyr) : cyr)
   
   return (
     <Box
@@ -26,10 +28,10 @@ function Footer() {
               OrdoDraconis
             </Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>
-              Средњовековни тематски парк
+              {srText('Средњовековни тематски парк')}
             </Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>
-              Грачаница
+              {srText('Грачаница')}
             </Typography>
           </Grid>
           
@@ -41,22 +43,22 @@ function Footer() {
               Email: ordodraconisgracanica@gmail.com
             </Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>
-              Телефон: +383 49 440 976
+              {srText('Телефон: +383 49 440 976')}
             </Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>
-              Телефон: +381 66 800 5522
+              {srText('Телефон: +381 66 800 5522')}
             </Typography>
             <Typography variant="body2">
-              Радно време: 08:00 - 00:00
+              {srText('Радно време: 08:00 - 00:00')}
             </Typography>
             <Typography variant="body2">
-              Радно време музеја: 10:00 - 18:00
+              {srText('Радно време музеја: 10:00 - 18:00')}
             </Typography>
           </Grid>
           
           <Grid item xs={12} md={4}>
             <Typography variant="h6" sx={{ mb: 2 }}>
-              Пратите нас
+              {srText('Пратите нас')}
             </Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Link href="https://www.facebook.com/ordodraconisgracanica" color="inherit" sx={{ textDecoration: 'none' }}>
@@ -71,7 +73,7 @@ function Footer() {
         
         <Box sx={{ mt: 4, pt: 4, borderTop: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
           <Typography variant="body2">
-            © {new Date().getFullYear()} OrdoDraconis. Сва права задржана.
+            © {new Date().getFullYear()} OrdoDraconis. {srText('Сва права задржана.')}
           </Typography>
         </Box>
       </Container>

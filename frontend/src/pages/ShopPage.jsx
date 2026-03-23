@@ -4,6 +4,7 @@ import { getProducts } from '../api/products'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { getLanguageFromPath, getPathPrefix } from '../utils/language'
 import { useTranslation } from 'react-i18next'
+import { cyrlToLatn } from '../utils/transliterate'
 
 function ShopPage() {
   const navigate = useNavigate()
@@ -11,6 +12,7 @@ function ShopPage() {
   const { t } = useTranslation()
   const { lang, script, locale } = getLanguageFromPath(location.pathname)
   const prefix = getPathPrefix(locale)
+  const srText = (cyr) => (locale === 'sr-latn' ? cyrlToLatn(cyr) : cyr)
   
   const { data: products, isLoading } = useQuery({
     queryKey: ['products', lang, script],
@@ -21,11 +23,11 @@ function ShopPage() {
     <Box sx={{ py: 8 }}>
       <Container>
         <Typography variant="h2" align="center" sx={{ mb: 8 }}>
-          {locale === 'en' ? 'Souvenir Shop' : 'Продавница сувенира'}
+          {locale === 'en' ? 'Souvenir Shop' : srText('Продавница сувенира')}
         </Typography>
         
         {isLoading ? (
-          <Typography align="center">Loading...</Typography>
+          <Typography align="center">{locale === 'en' ? 'Loading...' : srText('Učitavanje...')}</Typography>
         ) : products && products.length > 0 ? (
           <Grid container spacing={4}>
             {products.map((product) => (
@@ -55,7 +57,7 @@ function ShopPage() {
                         variant="contained"
                         onClick={() => navigate(`${prefix}/${locale === 'en' ? 'shop' : 'prodavnica'}/${product.slug}`)}
                       >
-                        {locale === 'en' ? 'View' : 'Погледај'}
+                        {locale === 'en' ? 'View' : srText('Погледај')}
                       </Button>
                     </Box>
                   </CardContent>
@@ -65,7 +67,7 @@ function ShopPage() {
           </Grid>
         ) : (
           <Typography align="center" color="text.secondary">
-            {locale === 'en' ? 'No products available' : 'Нема доступних производа'}
+            {locale === 'en' ? 'No products available' : srText('Нема доступних производа')}
           </Typography>
         )}
       </Container>

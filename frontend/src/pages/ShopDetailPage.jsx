@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getProductBySlug } from '../api/products'
 import { getLanguageFromPath, getPathPrefix } from '../utils/language'
 import { useTranslation } from 'react-i18next'
+import { cyrlToLatn } from '../utils/transliterate'
 
 function ShopDetailPage() {
   const { slug } = useParams()
@@ -13,6 +14,7 @@ function ShopDetailPage() {
   const { t } = useTranslation()
   const { lang, script, locale } = getLanguageFromPath(location.pathname)
   const prefix = getPathPrefix(locale)
+  const srText = (cyr) => (locale === 'sr-latn' ? cyrlToLatn(cyr) : cyr)
   const [quantity, setQuantity] = useState(1)
   
   const { data: product, isLoading } = useQuery({
@@ -31,14 +33,14 @@ function ShopDetailPage() {
     }
     
     localStorage.setItem('cart', JSON.stringify(cart))
-    alert(locale === 'en' ? 'Added to cart' : 'Додато у корпу')
+    alert(locale === 'en' ? 'Added to cart' : srText('Додато у корпу'))
   }
   
   if (isLoading) {
     return (
       <Box sx={{ py: 8 }}>
         <Container>
-          <Typography>Loading...</Typography>
+          <Typography>{locale === 'en' ? 'Loading...' : srText('Učitavanje...')}</Typography>
         </Container>
       </Box>
     )
@@ -48,7 +50,7 @@ function ShopDetailPage() {
     return (
       <Box sx={{ py: 8 }}>
         <Container>
-          <Typography>{locale === 'en' ? 'Product not found' : 'Производ није пронађен'}</Typography>
+          <Typography>{locale === 'en' ? 'Product not found' : srText('Производ није пронађен')}</Typography>
         </Container>
       </Box>
     )
@@ -87,14 +89,14 @@ function ShopDetailPage() {
             <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 4 }}>
               <TextField
                 type="number"
-                label={locale === 'en' ? 'Quantity' : 'Количина'}
+                label={locale === 'en' ? 'Quantity' : srText('Количина')}
                 value={quantity}
                 onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                 inputProps={{ min: 1 }}
                 sx={{ width: 120 }}
               />
               <Button variant="contained" size="large" onClick={addToCart}>
-                {locale === 'en' ? 'Add to Cart' : 'Додај у корпу'}
+                {locale === 'en' ? 'Add to Cart' : srText('Додај у корпу')}
               </Button>
             </Box>
           </Box>

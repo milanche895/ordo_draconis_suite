@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 import { getLanguageFromPath, getPathPrefix } from '../utils/language'
+import { cyrlToLatn } from '../utils/transliterate'
 import { useQuery } from '@tanstack/react-query'
 import { getNews } from '../api/news'
 
@@ -12,6 +13,7 @@ function HomePage() {
   const location = useLocation()
   const { lang, script, locale } = getLanguageFromPath(location.pathname)
   const prefix = getPathPrefix(locale)
+  const srText = (cyr) => (locale === 'sr-latn' ? cyrlToLatn(cyr) : cyr)
   
   const { data: newsData } = useQuery({
     queryKey: ['news', lang, script],
@@ -19,42 +21,42 @@ function HomePage() {
   })
   
   const testimonials = [
-    { text: 'Незаборавно искуство!', author: 'Марко П.' },
-    { text: 'Деца су била одушевљена!', author: 'Ана М.' },
-    { text: 'Препоручујем свима!', author: 'Петар К.' },
+    { text: srText('Незаборавно искуство!'), author: srText('Марко П.') },
+    { text: srText('Деца су била одушевљена!'), author: srText('Ана М.') },
+    { text: srText('Препоручујем свима!'), author: srText('Петар К.') },
   ]
   
   const features = [
     {
-      title: locale === 'en' ? 'Museum' : 'Музеј',
-      description: locale === 'en' ? 'Explore medieval artifacts' : 'Истражите средњовековне артефакте',
+      title: locale === 'en' ? 'Museum' : srText('Музеј'),
+      description: locale === 'en' ? 'Explore medieval artifacts' : srText('Истражите средњовековне артефакте'),
       icon: '🏛️',
       path: `${prefix}/${locale === 'en' ? 'museum' : 'muzej'}`,
     },
     {
-      title: locale === 'en' ? 'Workshops' : 'Радионице',
-      description: locale === 'en' ? 'Learn medieval crafts' : 'Научите средњовековне занате',
+      title: locale === 'en' ? 'Workshops' : srText('Радионице'),
+      description: locale === 'en' ? 'Learn medieval crafts' : srText('Научите средњовековне занате'),
       icon: '⚒️',
       path: `${prefix}/${locale === 'en' ? 'workshops' : 'radionice'}`,
     },
     {
-      title: locale === 'en' ? 'Adventures' : 'Авантуре',
-      description: locale === 'en' ? 'Interactive quests and games' : 'Интерактивни квестови и игре',
+      title: locale === 'en' ? 'Adventures' : srText('Авантуре'),
+      description: locale === 'en' ? 'Interactive quests and games' : srText('Интерактивни квестови и игре'),
       icon: '⚔️',
       path: prefix,
     },
     {
-      title: locale === 'en' ? 'Shop' : 'Продавница',
-      description: locale === 'en' ? 'Medieval souvenirs' : 'Средњовековни сувенири',
+      title: locale === 'en' ? 'Shop' : srText('Продавница'),
+      description: locale === 'en' ? 'Medieval souvenirs' : srText('Средњовековни сувенири'),
       icon: '🛒',
       path: `${prefix}/${locale === 'en' ? 'shop' : 'prodavnica'}`,
     },
   ]
   
   const stats = [
-    { number: '20+', label: locale === 'en' ? 'Activities' : 'Активности' },
-    { number: '5', label: locale === 'en' ? 'Guides in Costumes' : 'Водичи у костимима' },
-    { number: '1', label: locale === 'en' ? 'Museum Exhibition' : 'Музејска поставка' },
+    { number: '20+', label: locale === 'en' ? 'Activities' : srText('Активности') },
+    { number: '5', label: locale === 'en' ? 'Guides in Costumes' : srText('Водичи у костимима') },
+    { number: '1', label: locale === 'en' ? 'Museum Exhibition' : srText('Музејска поставка') },
   ]
   
   return (
@@ -156,7 +158,7 @@ function HomePage() {
         <Box sx={{ py: 8 }}>
           <Container>
             <Typography variant="h3" align="center" sx={{ mb: 6 }}>
-              {locale === 'en' ? 'Latest News' : 'Најновије вести'}
+              {locale === 'en' ? 'Latest News' : srText('Најновије вести')}
             </Typography>
             <Grid container spacing={4}>
               {newsData.content.slice(0, 3).map((news) => (
@@ -205,7 +207,7 @@ function HomePage() {
       <Box sx={{ py: 8 }}>
         <Container>
           <Typography variant="h3" align="center" sx={{ mb: 6 }}>
-            {locale === 'en' ? 'Explore Our Offerings' : 'Истражите нашу понуду'}
+            {locale === 'en' ? 'Explore Our Offerings' : srText('Истражите нашу понуду')}
           </Typography>
           <Grid container spacing={4}>
             {features.map((feature, idx) => (
@@ -243,12 +245,12 @@ function HomePage() {
           <Grid container spacing={4}>
             <Grid item xs={12} md={6}>
               <Typography variant="h3" sx={{ mb: 3 }}>
-                {locale === 'en' ? 'About OrdoDraconis' : 'О Ордо Драконис'}
+                {locale === 'en' ? 'About OrdoDraconis' : srText('О Ордо Драконис')}
               </Typography>
               <Typography variant="body1" sx={{ mb: 4, lineHeight: 1.8 }}>
                 {locale === 'en'
                   ? 'OrdoDraconis is a medieval theme park dedicated to preserving and showcasing the rich history and culture of the Middle Ages. Located in Gračanica, we offer immersive experiences through our museum, workshops, and interactive activities.'
-                  : 'Ордо Драконис је средњовековни тематски парк посвећен очувању и представљању богате историје и културе средњег века. Налази се у Грачаници и нуди уживања кроз музеј, радионице и интерактивне активности.'}
+                  : srText('Ордо Драконис је средњовековни тематски парк посвећен очувању и представљању богате историје и културе средњег века. Налази се у Грачаници и нуди уживања кроз музеј, радионице и интерактивне активности.')}
               </Typography>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -273,7 +275,7 @@ function HomePage() {
       <Box sx={{ py: 6, backgroundColor: '#F5F5DC' }}>
         <Container>
           <Typography variant="h4" align="center" sx={{ mb: 4 }}>
-            {locale === 'en' ? 'What Visitors Say' : 'Шта кажу посетиоци'}
+            {locale === 'en' ? 'What Visitors Say' : srText('Шта кажу посетиоци')}
           </Typography>
           <Grid container spacing={3}>
             {testimonials.map((testimonial, idx) => (
