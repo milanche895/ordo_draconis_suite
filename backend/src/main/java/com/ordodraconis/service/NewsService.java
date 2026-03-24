@@ -2,6 +2,7 @@ package com.ordodraconis.service;
 
 import com.ordodraconis.dto.NewsCreateUpdateDto;
 import com.ordodraconis.dto.NewsDto;
+import com.ordodraconis.dto.LocalizedStringsDto;
 import com.ordodraconis.model.MultiLanguageContent;
 import com.ordodraconis.model.News;
 import com.ordodraconis.repository.NewsRepository;
@@ -153,6 +154,9 @@ public class NewsService {
                 .title(title)
                 .summary(summary)
                 .content(content)
+                .titleLocales(toLocales(news.getTitle()))
+                .summaryLocales(toLocales(news.getSummary()))
+                .contentLocales(toLocales(news.getContent()))
                 .slug(news.getSlug())
                 .coverImage(news.getCoverImage())
                 .galleryImages(news.getGalleryImages())
@@ -177,5 +181,14 @@ public class NewsService {
         }
         
         return content.getSrCyrl() != null ? content.getSrCyrl() : "";
+    }
+
+    private LocalizedStringsDto toLocales(MultiLanguageContent content) {
+        if (content == null) return null;
+        LocalizedStringsDto dto = new LocalizedStringsDto();
+        dto.setSrCyrl(content.getSrCyrl());
+        dto.setSrLatn(content.getSrLatn());
+        dto.setEn(content.getEn());
+        return dto;
     }
 }

@@ -2,6 +2,7 @@ package com.ordodraconis.service;
 
 import com.ordodraconis.dto.ProductCreateUpdateDto;
 import com.ordodraconis.dto.ProductDto;
+import com.ordodraconis.dto.LocalizedStringsDto;
 import com.ordodraconis.model.MultiLanguageContent;
 import com.ordodraconis.model.Product;
 import com.ordodraconis.repository.ProductRepository;
@@ -117,6 +118,8 @@ public class ProductService {
                 .id(product.getId())
                 .name(name)
                 .description(description)
+                .nameLocales(toLocales(product.getName()))
+                .descriptionLocales(toLocales(product.getDescription()))
                 .slug(product.getSlug())
                 .price(product.getPrice())
                 .currency(product.getCurrency())
@@ -137,5 +140,14 @@ public class ProductService {
             return content.getSrLatn() != null ? content.getSrLatn() : content.getSrCyrl();
         }
         return content.getSrCyrl() != null ? content.getSrCyrl() : "";
+    }
+
+    private LocalizedStringsDto toLocales(MultiLanguageContent content) {
+        if (content == null) return null;
+        LocalizedStringsDto dto = new LocalizedStringsDto();
+        dto.setSrCyrl(content.getSrCyrl());
+        dto.setSrLatn(content.getSrLatn());
+        dto.setEn(content.getEn());
+        return dto;
     }
 }

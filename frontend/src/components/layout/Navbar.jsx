@@ -55,8 +55,36 @@ function Navbar() {
       (typeof firstSegment === 'string' && firstSegment.startsWith('sr-latn'))
 
     const restSegments = hasValidLocalePrefix ? segments.slice(1) : segments
-    const newPath = getPathPrefix(newLocale) + (restSegments.length ? `/${restSegments.join('/')}` : '')
-    i18n.changeLanguage(newLocale)
+
+    const segmentByLocale = {
+      museum: { sr: 'muzej', 'sr-latn': 'muzej', en: 'museum' },
+      workshops: { sr: 'radionice', 'sr-latn': 'radionice', en: 'workshops' },
+      gallery: { sr: 'galerija', 'sr-latn': 'galerija', en: 'gallery' },
+      news: { sr: 'vesti', 'sr-latn': 'vesti', en: 'news' },
+      shop: { sr: 'prodavnica', 'sr-latn': 'prodavnica', en: 'shop' },
+      contact: { sr: 'kontakt', 'sr-latn': 'kontakt', en: 'contact' },
+      festival: { sr: 'stit-festival', 'sr-latn': 'stit-festival', en: 'stit-festival' },
+    }
+
+    const normalizeSegment = (segment) => {
+      const entries = Object.values(segmentByLocale)
+      for (const variants of entries) {
+        if (Object.values(variants).includes(segment)) {
+          return variants[newLocale] ?? segment
+        }
+      }
+      return segment
+    }
+
+    const translatedSegments = [...restSegments]
+    if (translatedSegments.length > 0) {
+      translatedSegments[0] = normalizeSegment(translatedSegments[0])
+    }
+
+    const newPath =
+      getPathPrefix(newLocale) + (translatedSegments.length ? `/${translatedSegments.join('/')}` : '')
+    const i18nLocale = newLocale === 'sr-latn' ? 'sr-Latn' : newLocale
+    i18n.changeLanguage(i18nLocale)
     navigate(newPath)
     setAnchorEl(null)
   }

@@ -9,6 +9,8 @@ public class ProductDto {
     private String id;
     private String name;
     private String description;
+    private LocalizedStringsDto nameLocales;
+    private LocalizedStringsDto descriptionLocales;
     private String slug;
     private BigDecimal price;
     private String currency;
@@ -21,12 +23,15 @@ public class ProductDto {
     public ProductDto() {
     }
     
-    public ProductDto(String id, String name, String description, String slug, 
+    public ProductDto(String id, String name, String description,
+                     LocalizedStringsDto nameLocales, LocalizedStringsDto descriptionLocales, String slug,
                      BigDecimal price, String currency, List<String> images, 
                      boolean active, Integer stock, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.nameLocales = nameLocales;
+        this.descriptionLocales = descriptionLocales;
         this.slug = slug;
         this.price = price;
         this.currency = currency;
@@ -64,6 +69,22 @@ public class ProductDto {
     
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public LocalizedStringsDto getNameLocales() {
+        return nameLocales;
+    }
+
+    public void setNameLocales(LocalizedStringsDto nameLocales) {
+        this.nameLocales = nameLocales;
+    }
+
+    public LocalizedStringsDto getDescriptionLocales() {
+        return descriptionLocales;
+    }
+
+    public void setDescriptionLocales(LocalizedStringsDto descriptionLocales) {
+        this.descriptionLocales = descriptionLocales;
     }
     
     public String getSlug() {
@@ -134,6 +155,8 @@ public class ProductDto {
         private String id;
         private String name;
         private String description;
+        private LocalizedStringsDto nameLocales;
+        private LocalizedStringsDto descriptionLocales;
         private String slug;
         private BigDecimal price;
         private String currency;
@@ -155,6 +178,16 @@ public class ProductDto {
         
         public Builder description(String description) {
             this.description = description;
+            return this;
+        }
+
+        public Builder nameLocales(LocalizedStringsDto nameLocales) {
+            this.nameLocales = nameLocales;
+            return this;
+        }
+
+        public Builder descriptionLocales(LocalizedStringsDto descriptionLocales) {
+            this.descriptionLocales = descriptionLocales;
             return this;
         }
         
@@ -199,7 +232,8 @@ public class ProductDto {
         }
         
         public ProductDto build() {
-            return new ProductDto(id, name, description, slug, price, currency, images, 
+            return new ProductDto(id, name, description, nameLocales, descriptionLocales, slug,
+                                price, currency, images,
                                 active, stock, createdAt, updatedAt);
         }
     }

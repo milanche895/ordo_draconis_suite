@@ -9,6 +9,9 @@ public class NewsDto {
     private String title;
     private String summary;
     private String content;
+    private LocalizedStringsDto titleLocales;
+    private LocalizedStringsDto summaryLocales;
+    private LocalizedStringsDto contentLocales;
     private String slug;
     private String coverImage;
     private List<String> galleryImages = new ArrayList<>();
@@ -19,13 +22,18 @@ public class NewsDto {
     public NewsDto() {
     }
     
-    public NewsDto(String id, String title, String summary, String content, String slug, 
+    public NewsDto(String id, String title, String summary, String content,
+                   LocalizedStringsDto titleLocales, LocalizedStringsDto summaryLocales,
+                   LocalizedStringsDto contentLocales, String slug,
                    String coverImage, List<String> galleryImages,
                    LocalDateTime publishedAt, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
         this.summary = summary;
         this.content = content;
+        this.titleLocales = titleLocales;
+        this.summaryLocales = summaryLocales;
+        this.contentLocales = contentLocales;
         this.slug = slug;
         this.coverImage = coverImage;
         this.galleryImages = galleryImages != null ? galleryImages : new ArrayList<>();
@@ -69,6 +77,30 @@ public class NewsDto {
     
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public LocalizedStringsDto getTitleLocales() {
+        return titleLocales;
+    }
+
+    public void setTitleLocales(LocalizedStringsDto titleLocales) {
+        this.titleLocales = titleLocales;
+    }
+
+    public LocalizedStringsDto getSummaryLocales() {
+        return summaryLocales;
+    }
+
+    public void setSummaryLocales(LocalizedStringsDto summaryLocales) {
+        this.summaryLocales = summaryLocales;
+    }
+
+    public LocalizedStringsDto getContentLocales() {
+        return contentLocales;
+    }
+
+    public void setContentLocales(LocalizedStringsDto contentLocales) {
+        this.contentLocales = contentLocales;
     }
     
     public String getSlug() {
@@ -124,6 +156,9 @@ public class NewsDto {
         private String title;
         private String summary;
         private String content;
+        private LocalizedStringsDto titleLocales;
+        private LocalizedStringsDto summaryLocales;
+        private LocalizedStringsDto contentLocales;
         private String slug;
         private String coverImage;
         private List<String> galleryImages = new ArrayList<>();
@@ -148,6 +183,21 @@ public class NewsDto {
         
         public Builder content(String content) {
             this.content = content;
+            return this;
+        }
+
+        public Builder titleLocales(LocalizedStringsDto titleLocales) {
+            this.titleLocales = titleLocales;
+            return this;
+        }
+
+        public Builder summaryLocales(LocalizedStringsDto summaryLocales) {
+            this.summaryLocales = summaryLocales;
+            return this;
+        }
+
+        public Builder contentLocales(LocalizedStringsDto contentLocales) {
+            this.contentLocales = contentLocales;
             return this;
         }
         
@@ -182,7 +232,8 @@ public class NewsDto {
         }
         
         public NewsDto build() {
-            return new NewsDto(id, title, summary, content, slug, coverImage, galleryImages, 
+            return new NewsDto(id, title, summary, content, titleLocales, summaryLocales,
+                             contentLocales, slug, coverImage, galleryImages,
                              publishedAt, createdAt, updatedAt);
         }
     }

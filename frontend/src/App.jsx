@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import AppShell from './components/layout/AppShell'
 import HomePage from './pages/HomePage'
@@ -18,20 +19,21 @@ import { useEffect } from 'react'
 
 function App() {
   const { i18n } = useTranslation()
+  const location = useLocation()
   
   useEffect(() => {
-    const path = window.location.pathname
+    const path = location.pathname
     if (path.startsWith('/admin')) {
       return
     }
     if (path.startsWith('/sr-latn')) {
-      i18n.changeLanguage('sr-latn')
+      i18n.changeLanguage('sr-Latn')
     } else if (path.startsWith('/en')) {
       i18n.changeLanguage('en')
     } else {
       i18n.changeLanguage('sr')
     }
-  }, [i18n])
+  }, [i18n, location.pathname])
   
   return (
     <AppShell>

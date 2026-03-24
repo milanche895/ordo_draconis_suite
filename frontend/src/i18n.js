@@ -36,7 +36,7 @@ const resources = {
       },
     },
   },
-  'sr-latn': {
+  'sr-Latn': {
     translation: {
       nav: {
         home: 'Početna',
@@ -112,6 +112,9 @@ i18n
     resources,
     lng: 'sr',
     fallbackLng: 'sr',
+    supportedLngs: ['sr', 'sr-Latn', 'en'],
+    nonExplicitSupportedLngs: true,
+    load: 'currentOnly',
     interpolation: {
       escapeValue: false,
     },
