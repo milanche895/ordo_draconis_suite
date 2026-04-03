@@ -11,6 +11,8 @@ import com.ordodraconis.service.ProductService;
 import com.ordodraconis.service.PageIntroService;
 import com.ordodraconis.service.WorkshopService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +23,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
+
+    private static final Logger log = LoggerFactory.getLogger(AdminController.class);
 
     private final NewsService newsService;
     private final ProductService productService;
@@ -115,7 +119,11 @@ public class AdminController {
     // Media
     @PostMapping("/media/upload")
     public ResponseEntity<Media> uploadMedia(@RequestParam("file") MultipartFile file) throws IOException {
-        return ResponseEntity.ok(mediaService.uploadFile(file));
+        log.info("POST /media/upload: name={}, size={}, contentType={}, empty={}",
+                file.getOriginalFilename(), file.getSize(), file.getContentType(), file.isEmpty());
+        Media saved = mediaService.uploadFile(file);
+        log.info("POST /media/upload: saved id={}, path={}", saved.getId(), saved.getPath());
+        return ResponseEntity.ok(saved);
     }
     
     @GetMapping("/media")
@@ -159,6 +167,16 @@ public class AdminController {
     @PutMapping("/page-intros/workshops")
     public ResponseEntity<LocalizedStringsDto> updateWorkshopsPageIntro(@RequestBody LocalizedStringsDto dto) {
         return ResponseEntity.ok(pageIntroService.updateWorkshopsIntro(dto));
+    }
+
+    @GetMapping("/page-intros/krcma")
+    public ResponseEntity<KrcmaPageAdminDto> getKrcmaPageIntro() {
+        return ResponseEntity.ok(pageIntroService.getKrcmaForAdmin());
+    }
+
+    @PutMapping("/page-intros/krcma")
+    public ResponseEntity<KrcmaPageAdminDto> updateKrcmaPageIntro(@RequestBody KrcmaPageAdminDto dto) {
+        return ResponseEntity.ok(pageIntroService.updateKrcma(dto));
     }
     
     // Museum Item CRUD

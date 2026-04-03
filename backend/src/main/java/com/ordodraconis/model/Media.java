@@ -17,7 +17,10 @@ public class Media {
     private String contentType;
     private Long size;
     private String path; // Relative path from upload dir
-    
+
+    /** Cloudinary {@code resource_type} ({@code image}, {@code raw}, {@code video}) — for delete API. */
+    private String cloudinaryResourceType;
+
     private String altText;
     private List<String> tags = new ArrayList<>();
     
@@ -94,7 +97,15 @@ public class Media {
     public void setPath(String path) {
         this.path = path;
     }
-    
+
+    public String getCloudinaryResourceType() {
+        return cloudinaryResourceType;
+    }
+
+    public void setCloudinaryResourceType(String cloudinaryResourceType) {
+        this.cloudinaryResourceType = cloudinaryResourceType;
+    }
+
     public String getAltText() {
         return altText;
     }

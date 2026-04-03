@@ -59,6 +59,7 @@ function Navbar() {
     const segmentByLocale = {
       museum: { sr: 'muzej', 'sr-latn': 'muzej', en: 'museum' },
       workshops: { sr: 'radionice', 'sr-latn': 'radionice', en: 'workshops' },
+      krcma: { sr: 'krcma', 'sr-latn': 'krcma', en: 'tavern' },
       gallery: { sr: 'galerija', 'sr-latn': 'galerija', en: 'gallery' },
       news: { sr: 'vesti', 'sr-latn': 'vesti', en: 'news' },
       shop: { sr: 'prodavnica', 'sr-latn': 'prodavnica', en: 'shop' },
@@ -96,6 +97,7 @@ function Navbar() {
     { key: 'festival', path: festivalPath },
     { key: 'museum', path: `${prefix}/${locale === 'en' ? 'museum' : 'muzej'}` },
     { key: 'workshops', path: `${prefix}/${locale === 'en' ? 'workshops' : 'radionice'}` },
+    { key: 'krcma', path: `${prefix}/${locale === 'en' ? 'tavern' : 'krcma'}` },
     { key: 'gallery', path: `${prefix}/${locale === 'en' ? 'gallery' : 'galerija'}` },
     { key: 'news', path: `${prefix}/${locale === 'en' ? 'news' : 'vesti'}` },
     { key: 'shop', path: `${prefix}/${locale === 'en' ? 'shop' : 'prodavnica'}` },

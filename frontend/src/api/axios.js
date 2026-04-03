@@ -16,6 +16,12 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+  // FormData: axios 1.x dispatchRequest would otherwise set application/x-www-form-urlencoded after this
+  // interceptor, breaking multipart. Setting Content-Type to false skips sending the header so the
+  // browser sets multipart/form-data with boundary (see AxiosHeaders.toJSON).
+  if (config.data instanceof FormData && config.headers) {
+    config.headers.set('Content-Type', false)
+  }
   return config
 })
 

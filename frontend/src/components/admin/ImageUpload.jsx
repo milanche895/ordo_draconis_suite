@@ -32,9 +32,7 @@ function ImageUpload({ value, onChange, multiple = false, label = 'Upload Image'
     mutationFn: async (file) => {
       const formData = new FormData()
       formData.append('file', file)
-      const response = await api.post('/admin/media/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      const response = await api.post('/admin/media/upload', formData)
       return response.data
     },
     onSuccess: (data) => {

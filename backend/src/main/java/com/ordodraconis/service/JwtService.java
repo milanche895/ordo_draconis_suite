@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,9 @@ public class JwtService {
     }
     
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", resolveRoleClaim(userDetails));
+        return generateToken(claims, userDetails);
     }
     
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
@@ -44,7 +47,21 @@ public class JwtService {
     }
     
     public String generateRefreshToken(UserDetails userDetails) {
-        return buildToken(new HashMap<>(), userDetails, refreshTokenExpiration);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", resolveRoleClaim(userDetails));
+        return buildToken(claims, userDetails, refreshTokenExpiration);
+    }
+
+    /**
+     * Uloga u JWT-u (claim "role") — informativno za klijent; Spring Security i dalje koristi učitavanje
+     * korisnika iz baze i {@link UserDetails#getAuthorities()} pri svakom zahtevu.
+     */
+    private static String resolveRoleClaim(UserDetails userDetails) {
+        return userDetails.getAuthorities().stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .map(a -> a.replaceFirst("^ROLE_", ""))
+                .orElse("USER");
     }
     
     private String buildToken(

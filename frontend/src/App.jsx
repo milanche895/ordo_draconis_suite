@@ -13,6 +13,7 @@ import NewsDetailPage from './pages/NewsDetailPage'
 import ShopPage from './pages/ShopPage'
 import ShopDetailPage from './pages/ShopDetailPage'
 import ContactPage from './pages/ContactPage'
+import KrcmaPage from './pages/KrcmaPage'
 import AdminLoginPage from './pages/admin/AdminLoginPage'
 import AdminDashboardPage from './pages/admin/AdminDashboardPage'
 import { useEffect } from 'react'
@@ -79,6 +80,10 @@ function App() {
         <Route path="/sr/kontakt" element={<ContactPage />} />
         <Route path="/sr-latn/kontakt" element={<ContactPage />} />
         <Route path="/en/contact" element={<ContactPage />} />
+
+        <Route path="/sr/krcma" element={<KrcmaPage />} />
+        <Route path="/sr-latn/krcma" element={<KrcmaPage />} />
+        <Route path="/en/tavern" element={<KrcmaPage />} />
         
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/admin/*" element={<AdminDashboardPage />} />

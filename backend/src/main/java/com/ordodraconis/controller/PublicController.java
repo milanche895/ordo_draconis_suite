@@ -6,6 +6,7 @@ import com.ordodraconis.dto.FestivalDto;
 import com.ordodraconis.dto.MuseumItemDto;
 import com.ordodraconis.dto.NewsDto;
 import com.ordodraconis.dto.ProductDto;
+import com.ordodraconis.dto.KrcmaPageDto;
 import com.ordodraconis.dto.PageIntroTextDto;
 import com.ordodraconis.dto.WorkshopDto;
 import com.ordodraconis.service.AlbumService;
@@ -158,6 +159,14 @@ public class PublicController {
             @RequestParam(defaultValue = "cyrl") String script
     ) {
         return ResponseEntity.ok(pageIntroService.getWorkshopsIntro(lang, script));
+    }
+
+    @GetMapping("/krcma")
+    public ResponseEntity<KrcmaPageDto> getKrcmaPage(
+            @RequestParam(defaultValue = "sr") String lang,
+            @RequestParam(defaultValue = "cyrl") String script
+    ) {
+        return ResponseEntity.ok(pageIntroService.getKrcma(lang, script));
     }
 
     /** Provera konekcije: otvori http://localhost:8080/api/public/mongo-info i uporedi "database" sa bazom u Atlasu */

@@ -1,5 +1,7 @@
 package com.ordodraconis.service;
 
+import com.ordodraconis.dto.KrcmaPageAdminDto;
+import com.ordodraconis.dto.KrcmaPageDto;
 import com.ordodraconis.dto.LocalizedStringsDto;
 import com.ordodraconis.dto.PageIntroTextDto;
 import com.ordodraconis.model.MultiLanguageContent;
@@ -8,17 +10,23 @@ import com.ordodraconis.repository.PageIntroRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class PageIntroService {
 
     private final PageIntroRepository pageIntroRepository;
     private final TransliterationService transliterationService;
+    private final CloudinaryDeliveryService cloudinaryDeliveryService;
 
     public PageIntroService(PageIntroRepository pageIntroRepository,
-                            TransliterationService transliterationService) {
+                            TransliterationService transliterationService,
+                            CloudinaryDeliveryService cloudinaryDeliveryService) {
         this.pageIntroRepository = pageIntroRepository;
         this.transliterationService = transliterationService;
+        this.cloudinaryDeliveryService = cloudinaryDeliveryService;
     }
 
     public PageIntroTextDto getWorkshopsIntro(String lang, String script) {
@@ -44,6 +52,54 @@ public class PageIntroService {
         doc.setUpdatedAt(LocalDateTime.now());
         pageIntroRepository.save(doc);
         return toLocales(doc.getDescription());
+    }
+
+    public KrcmaPageDto getKrcma(String lang, String script) {
+        return pageIntroRepository.findById(PageIntro.KRCMA)
+                .map(p -> {
+                    String desc = resolveContent(p.getDescription(), lang, script);
+                    List<String> imgs = p.getGalleryImages() != null ? p.getGalleryImages() : Collections.emptyList();
+                    String pdf = p.getMenuPdfUrl() != null ? p.getMenuPdfUrl().trim() : "";
+                    if (!pdf.isEmpty()) {
+                        pdf = cloudinaryDeliveryService.signedDeliveryUrl(pdf);
+                    }
+                    return new KrcmaPageDto(desc, imgs, pdf);
+                })
+                .orElse(new KrcmaPageDto("", Collections.emptyList(), ""));
+    }
+
+    public KrcmaPageAdminDto getKrcmaForAdmin() {
+        return pageIntroRepository.findById(PageIntro.KRCMA)
+                .map(p -> {
+                    KrcmaPageAdminDto d = new KrcmaPageAdminDto();
+                    d.setDescription(toLocales(p.getDescription()));
+                    d.setGalleryImages(p.getGalleryImages() != null ? new ArrayList<>(p.getGalleryImages()) : new ArrayList<>());
+                    d.setMenuPdfUrl(p.getMenuPdfUrl());
+                    return d;
+                })
+                .orElseGet(() -> {
+                    KrcmaPageAdminDto d = new KrcmaPageAdminDto();
+                    d.setDescription(new LocalizedStringsDto());
+                    return d;
+                });
+    }
+
+    public KrcmaPageAdminDto updateKrcma(KrcmaPageAdminDto dto) {
+        PageIntro doc = pageIntroRepository.findById(PageIntro.KRCMA).orElseGet(() -> {
+            PageIntro p = new PageIntro();
+            p.setId(PageIntro.KRCMA);
+            return p;
+        });
+        LocalizedStringsDto descDto = dto.getDescription();
+        if (descDto == null) {
+            descDto = new LocalizedStringsDto();
+        }
+        doc.setDescription(fromDto(descDto));
+        doc.setGalleryImages(dto.getGalleryImages() != null ? dto.getGalleryImages() : new ArrayList<>());
+        doc.setMenuPdfUrl(dto.getMenuPdfUrl());
+        doc.setUpdatedAt(LocalDateTime.now());
+        pageIntroRepository.save(doc);
+        return getKrcmaForAdmin();
     }
 
     private MultiLanguageContent fromDto(LocalizedStringsDto dto) {

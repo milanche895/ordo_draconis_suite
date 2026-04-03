@@ -19,9 +19,7 @@ function MediaAdmin() {
     mutationFn: (file) => {
       const formData = new FormData()
       formData.append('file', file)
-      return api.post('/admin/media/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      return api.post('/admin/media/upload', formData)
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['admin-media'])
