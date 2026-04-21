@@ -6,7 +6,6 @@ import {
   Typography,
   IconButton,
   Paper,
-  Stack,
   CircularProgress,
 } from '@mui/material'
 import { CloudUpload, Delete, Image as ImageIcon } from '@mui/icons-material'
@@ -121,7 +120,14 @@ function ImageUpload({ value, onChange, multiple = false, label = 'Upload Image'
       </Paper>
       
       {multiple ? (
-        <Stack direction="row" spacing={2} sx={{ mt: 2, flexWrap: 'wrap' }}>
+        <Box
+          sx={{
+            mt: 2,
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 1.5,
+          }}
+        >
           {(currentValue || []).map((url, index) => (
             <Box key={index} sx={{ position: 'relative', width: 150, height: 150 }}>
               <Box
@@ -151,7 +157,7 @@ function ImageUpload({ value, onChange, multiple = false, label = 'Upload Image'
               </IconButton>
             </Box>
           ))}
-        </Stack>
+        </Box>
       ) : currentValue ? (
         <Box sx={{ position: 'relative', mt: 2, maxWidth: 300 }}>
           <Box

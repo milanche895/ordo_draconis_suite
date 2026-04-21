@@ -3,6 +3,7 @@ package com.ordodraconis.controller;
 import com.ordodraconis.dto.*;
 import com.ordodraconis.model.Media;
 import com.ordodraconis.service.AlbumService;
+import com.ordodraconis.service.GalleryService;
 import com.ordodraconis.service.MediaService;
 import com.ordodraconis.service.FestivalService;
 import com.ordodraconis.service.MuseumItemService;
@@ -34,12 +35,14 @@ public class AdminController {
     private final FestivalService festivalService;
     private final WorkshopService workshopService;
     private final PageIntroService pageIntroService;
+    private final GalleryService galleryService;
 
     public AdminController(NewsService newsService, ProductService productService,
                           AlbumService albumService, MediaService mediaService,
                           MuseumItemService museumItemService, FestivalService festivalService,
                           WorkshopService workshopService,
-                          PageIntroService pageIntroService) {
+                          PageIntroService pageIntroService,
+                          GalleryService galleryService) {
         this.newsService = newsService;
         this.productService = productService;
         this.albumService = albumService;
@@ -48,6 +51,7 @@ public class AdminController {
         this.festivalService = festivalService;
         this.workshopService = workshopService;
         this.pageIntroService = pageIntroService;
+        this.galleryService = galleryService;
     }
     
     // News CRUD
@@ -114,6 +118,35 @@ public class AdminController {
     public ResponseEntity<Void> deleteAlbum(@PathVariable String id) {
         albumService.delete(id);
         return ResponseEntity.ok().build();
+    }
+
+    // Gallery Albums Admin
+    @GetMapping("/gallery/albums")
+    public ResponseEntity<List<GalleryAdminAlbumDto>> getGalleryAlbumsForAdmin() {
+        return ResponseEntity.ok(galleryService.getAdminAlbums());
+    }
+
+    @PostMapping("/gallery/albums/custom")
+    public ResponseEntity<GalleryAdminAlbumDto> createCustomGalleryAlbum(@RequestBody GalleryCustomAlbumRequest request) {
+        return ResponseEntity.ok(galleryService.createCustomAlbum(request));
+    }
+
+    @PutMapping("/gallery/albums/custom/{id}")
+    public ResponseEntity<GalleryAdminAlbumDto> updateCustomGalleryAlbum(@PathVariable String id,
+                                                                          @RequestBody GalleryCustomAlbumRequest request) {
+        return ResponseEntity.ok(galleryService.updateCustomAlbum(id, request));
+    }
+
+    @DeleteMapping("/gallery/albums/custom/{id}")
+    public ResponseEntity<Void> deleteCustomGalleryAlbum(@PathVariable String id) {
+        galleryService.deleteCustomAlbum(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/gallery/albums/default/{key}/images")
+    public ResponseEntity<GalleryAdminAlbumDto> updateDefaultGalleryAlbumImages(@PathVariable String key,
+                                                                                 @RequestBody List<String> images) {
+        return ResponseEntity.ok(galleryService.updateDefaultAlbumImages(key, images));
     }
     
     // Media

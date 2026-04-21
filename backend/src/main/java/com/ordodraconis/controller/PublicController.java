@@ -3,6 +3,7 @@ package com.ordodraconis.controller;
 import com.ordodraconis.dto.AlbumDto;
 import com.ordodraconis.dto.ContactRequest;
 import com.ordodraconis.dto.FestivalDto;
+import com.ordodraconis.dto.GalleryAlbumDto;
 import com.ordodraconis.dto.MuseumItemDto;
 import com.ordodraconis.dto.NewsDto;
 import com.ordodraconis.dto.ProductDto;
@@ -10,6 +11,7 @@ import com.ordodraconis.dto.KrcmaPageDto;
 import com.ordodraconis.dto.PageIntroTextDto;
 import com.ordodraconis.dto.WorkshopDto;
 import com.ordodraconis.service.AlbumService;
+import com.ordodraconis.service.GalleryService;
 import com.ordodraconis.service.PageIntroService;
 import com.ordodraconis.service.FestivalService;
 import com.ordodraconis.service.MuseumItemService;
@@ -40,12 +42,14 @@ public class PublicController {
     private final FestivalService festivalService;
     private final WorkshopService workshopService;
     private final PageIntroService pageIntroService;
+        private final GalleryService galleryService;
     private final MongoTemplate mongoTemplate;
 
     public PublicController(NewsService newsService, ProductService productService,
                              AlbumService albumService, MuseumItemService museumItemService,
                              FestivalService festivalService, WorkshopService workshopService,
                              PageIntroService pageIntroService,
+                                                         GalleryService galleryService,
                              MongoTemplate mongoTemplate) {
         this.newsService = newsService;
         this.productService = productService;
@@ -54,6 +58,7 @@ public class PublicController {
         this.festivalService = festivalService;
         this.workshopService = workshopService;
         this.pageIntroService = pageIntroService;
+                this.galleryService = galleryService;
         this.mongoTemplate = mongoTemplate;
     }
     
@@ -106,6 +111,14 @@ public class PublicController {
     ) {
         return ResponseEntity.ok(albumService.getAll(lang, script));
     }
+
+        @GetMapping("/gallery/albums")
+        public ResponseEntity<List<GalleryAlbumDto>> getGalleryAlbums(
+                        @RequestParam(defaultValue = "sr") String lang,
+                        @RequestParam(defaultValue = "cyrl") String script
+        ) {
+                return ResponseEntity.ok(galleryService.getGalleryAlbums(lang, script));
+        }
     
     @GetMapping("/albums/{id}")
     public ResponseEntity<AlbumDto> getAlbumById(

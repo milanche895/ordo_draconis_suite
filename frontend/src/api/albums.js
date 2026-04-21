@@ -1,7 +1,7 @@
 import api from './axios'
 
 export const getAlbums = async (lang = 'sr', script = 'cyrl') => {
-  const response = await api.get('/public/albums', {
+  const response = await api.get('/public/gallery/albums', {
     params: { lang, script },
   })
   return response.data
